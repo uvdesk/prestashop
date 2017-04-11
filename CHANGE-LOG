@@ -1,0 +1,28 @@
+Prestashop Uvdesk Ticket System
+
+##########################################################################
+Change Log : V1.0.0 | COMPATIBLE:: PRESTASHOP V1.6
+##########################################################################
+
+## Added Features:
+
+- [+]FO :
+	- Customer can create ticket from my account page
+	- Customer can view ticket list by Open, Pending, Closed etc.
+	- Customer can reply on ticket with attachment.
+	- Customer can add and delete collaborator for ticket
+- [+]BO :
+	- Admin can view ticket list by Open, Pending, Closed etc.
+	- Admin can reply on ticket with attachment.
+	- Admin can delete tickets
+	- Admin can check tickets by Labels ie All, unassgined, trashed etc.
+	- Admin can filter tickets by agent, customer, type etc.
+	- Admin can assign ticket to agent
+
+
+##########################################################################
+Change Log : V1.0.0 To V4.0.0 | COMPATIBLE:: PRESTASHOP V1.7
+##########################################################################
+
+## Compatibiltiy
+	- Module compatible with Prestashop V1.7

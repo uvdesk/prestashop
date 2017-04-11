@@ -1,0 +1,14 @@
+{
+    "name": "uvdesk/prestashop-uvdesk-integration",
+    "description": "Connect your Prestashop site with UVdesk helpdesk system",
+    "require": {
+        "php": "~5.5.0|~5.6.0|~7.0.0"
+    },
+    "type": "prestashop-module",
+    "version": "1.0.0",
+    "license": [
+        "proprietary"
+    ],
+    "minimum-stability": "dev",
+    "prefer-stable" : "true"
+}
