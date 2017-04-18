@@ -277,8 +277,7 @@ class WkUvdeskHelper extends ObjectModel
         $data .= '--' . $mimeBoundary . $lineEnd;
 
         if ($actAsType == 'customer') {
-            //$customerEmail = Context::getContext()->customer->email;
-            $customerEmail = 'neeraj751@webkul.com';
+            $customerEmail = Context::getContext()->customer->email;
             // act as email (email of user making reply to differentiate whether the reply is made by the customer or collaborator)
             $data .= 'Content-Disposition: form-data; name="actAsEmail"' . $lineEnd . $lineEnd;
             $data .= "".$customerEmail."" . $lineEnd;
