@@ -277,8 +277,7 @@ class WkUvdeskHelper extends ObjectModel
         $data .= '--' . $mimeBoundary . $lineEnd;
 
         if ($actAsType == 'customer') {
-            //$customerEmail = Context::getContext()->customer->email;
-            $customerEmail = 'neeraj751@webkul.com';
+            $customerEmail = Context::getContext()->customer->email;
             // act as email (email of user making reply to differentiate whether the reply is made by the customer or collaborator)
             $data .= 'Content-Disposition: form-data; name="actAsEmail"' . $lineEnd . $lineEnd;
             $data .= "".$customerEmail."" . $lineEnd;
@@ -466,12 +465,16 @@ class WkUvdeskHelper extends ObjectModel
      *
      * @return array
      */
-    public function pagination($total_products = null)
+    public function pagination($total_products = null, $itemsPerPage = false)
     {
         $this->context = Context::getContext();
 
         // Retrieve the default number of products per page and the other available selections
-        $default_products_per_page = max(1, (int)Configuration::get('PS_PRODUCTS_PER_PAGE'));
+        if ($itemsPerPage) {
+            $default_products_per_page = max(1, (int)$itemsPerPage);
+        } else {
+            $default_products_per_page = max(1, (int)Configuration::get('PS_PRODUCTS_PER_PAGE'));
+        }
         $n_array = array($default_products_per_page, $default_products_per_page * 2, $default_products_per_page * 5);
 
         if ((int)Tools::getValue('n') && (int)$total_products > 0) {

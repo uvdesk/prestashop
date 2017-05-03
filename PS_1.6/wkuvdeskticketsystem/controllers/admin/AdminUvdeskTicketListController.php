@@ -68,7 +68,7 @@ class AdminUvdeskTicketListController extends ModuleAdminController
             }
         } else {
             //Ticket list page
-            $activeFilter = 0;
+            $activeFilter = array();
             if (Tools::getValue('p')) {
                 $page = Tools::getValue('p');
             } else {
@@ -111,25 +111,25 @@ class AdminUvdeskTicketListController extends ModuleAdminController
             }
             if (Tools::getValue('group')) {
                 $group = Tools::getValue('group');
-                $activeFilter = $group;
+                $activeFilter[] = $group;
             } else {
                 $group = '';
             }
             if (Tools::getValue('team')) {
                 $team = Tools::getValue('team');
-                $activeFilter = $team;
+                $activeFilter[] = $team;
             } else {
                 $team = '';
             }
             if (Tools::getValue('priority')) {
                 $priority = Tools::getValue('priority');
-                $activeFilter = $priority;
+                $activeFilter[] = $priority;
             } else {
                 $priority = '';
             }
             if (Tools::getValue('type')) {
                 $type = Tools::getValue('type');
-                $activeFilter = $type;
+                $activeFilter[] = $type;
             } else {
                 $type = '';
             }
@@ -152,7 +152,10 @@ class AdminUvdeskTicketListController extends ModuleAdminController
             $ticketList = $objUvdesk->getTickets($filterData);
             if (isset($ticketList->tickets)) {
                 $customerTickets = (array) $ticketList->tickets;
-                $objUvdesk->pagination($ticketList->pagination->totalCount); // total no. of tickets by status
+                if ($ticketList->pagination->totalCount) {
+                    // total no. of tickets by status
+                    $objUvdesk->pagination($ticketList->pagination->totalCount, $ticketList->pagination->numItemsPerPage);
+                }
 
                 $this->context->smarty->assign(array(
                         'customerTickets' => $customerTickets,
@@ -172,10 +175,18 @@ class AdminUvdeskTicketListController extends ModuleAdminController
 
                 Media::addJsDef(array(
                         'allAgentList' => $objUvdesk->getMembers(),
-                        'activeFilter' => $activeFilter,
+                        'activeFilter' => Tools::jsonEncode($activeFilter),
+                        'activeGroup' => $group,
+                        'activeTeam' => $team,
+                        'activePriority' => $priority,
+                        'activeType' => $type,
                     ));
             }
         }
+
+        Media::addJsDef(array(
+            'wk_uvdesk_user_img' => _MODULE_DIR_.'wkuvdeskticketsystem/views/img/wk-uvdesk-user.png',
+        ));
 
         $this->fields_form = array(
             'submit' => array(
@@ -184,20 +195,6 @@ class AdminUvdeskTicketListController extends ModuleAdminController
         );
 
         return parent::renderForm();
-    }
-
-    public function filterTicketsByPage($customerTickets, $p, $n)
-    {
-        $result = array();
-        $start = ($p - 1) * $n;
-        $end = $start + $n;
-        for ($i=$start; $i<$end; $i++) {
-            if (array_key_exists($i, $customerTickets)) {
-                $result[] = $customerTickets[$i];
-            }
-        }
-        
-        return $result;
     }
 
     public function postProcess()

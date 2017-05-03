@@ -45,6 +45,7 @@ class WkUvDeskTicketSystemViewTicketModuleFrontController extends ModuleFrontCon
 
                             Media::addJsDef(array(
                                     'wk_tinymce_path' => _MODULE_DIR_.'wkuvdeskticketsystem/libs',
+                                    'wk_uvdesk_user_img' => _MODULE_DIR_.'wkuvdeskticketsystem/views/img/wk-uvdesk-user.png',
                                     'iso' => $this->context->language->iso_code,
                                 ));
                         
@@ -97,7 +98,7 @@ class WkUvDeskTicketSystemViewTicketModuleFrontController extends ModuleFrontCon
             if (!$collaboratorEmail) {
                 $this->errors[] = $this->module->l('Email is required field.', 'viewticket');
             } elseif (!Validate::isEmail($collaboratorEmail)) {
-                $this->errors[] = $this->module->l('Invalid Email', 'viewticket');
+                $this->errors[] = $this->module->l('Email must be valid.', 'viewticket');
             }
 
             if (empty($this->errors)) {

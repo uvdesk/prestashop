@@ -30,7 +30,7 @@
 				<div class="col-md-3">
 			    	{include file="$self/../../views/templates/admin/uvdeskticket-labels.tpl"}
 			    </div>
-			    <div class="panel panel-default col-md-9">
+			    <div class="wk-left-border col-md-9">
 			        <div id="ticket-detail">
 				        <h4>
 				            #{if isset($ticket->incrementId)}{$ticket->incrementId}{/if} {if isset($ticket->subject)}{$ticket->subject}{/if}
@@ -58,7 +58,7 @@
 				        <div class="col-md-12">
 				            <div class="pull-left">
 				            	<span class="round-tabs">
-				                	<img src="{if isset($ticket->customer->profileImage)}{$ticket->customer->profileImage}{else}https://cdn.uvdesk.com/uvdesk/images/d94332c.png{/if}">
+				                	<img src="{if isset($ticket->customer->profileImage)}{$ticket->customer->profileImage}{else}{$smarty.const._MODULE_DIR_}wkuvdeskticketsystem/views/img/wk-uvdesk-user.png{/if}">
 				            	</span>
 				            </div>
 				            <div class="thread-info">
@@ -96,7 +96,7 @@
 			        	<div>
 				        	<div class="pull-left">
 					            <span class="round-tabs">
-					            	<img src="{if isset($userDetails->pic)}{$userDetails->pic}{else}https://cdn.uvdesk.com/uvdesk/images/d94332c.png{/if}">
+					            	<img src="{if isset($userDetails->pic)}{$userDetails->pic}{else}{$smarty.const._MODULE_DIR_}wkuvdeskticketsystem/views/img/wk-uvdesk-user.png{/if}">
 					            </span>
 				        	</div>
 				        	<div class="thread-info">
@@ -106,7 +106,7 @@
 				        </div>
 			        	<div class="thread-body">
 				            <div class="thread-info">
-				              	<form action="{$current|escape:'htmlall':'UTF-8'}&id={$incrementId|escape:'htmlall':'UTF-8'}&token={$token|escape:'htmlall':'UTF-8'}" method="post" enctype="multipart/form-data">
+				              	<form action="{$current}&id={$incrementId}&token={$token}" method="post" enctype="multipart/form-data">
 					                <input type="hidden" name="ticketId" value="{$ticketId}">
 					                <div class="reply border-none" style="padding: 0;">
 					                	<textarea name="reply" id="reply" class="wk_tinymce form-control"></textarea>
@@ -156,7 +156,7 @@
 		            	<label for="filter-group" class="control-label">{l s='Group' mod='wkuvdeskticketsystem'}</label>
 		            	<div class="pos-relative">
 		            		<select name="filter-group" id="filter-group" class="wk-filter-ticket">
-		            			<option value="" {if $activeGroup == ''}selected="selected"{/if}>{l s='All' mod='wkuvdeskticketsystem'}</option>
+		            			<option value="" data-action="group" {if $activeGroup == ''}selected="selected"{/if}>{l s='All' mod='wkuvdeskticketsystem'}</option>
 		              		</select>
 		            	</div>
 		          	</div>
@@ -164,7 +164,7 @@
 		            	<label for="filter-team" class="control-label">{l s='Team' mod='wkuvdeskticketsystem'}</label>
 		            	<div class="pos-relative">
 	            			<select name="filter-team" id="filter-team" class="wk-filter-ticket">
-	            				<option value="" {if $activeTeam == ''}selected="selected"{/if}>{l s='All' mod='wkuvdeskticketsystem'}</option>
+	            				<option value="" data-action="team" {if $activeTeam == ''}selected="selected"{/if}>{l s='All' mod='wkuvdeskticketsystem'}</option>
 	              			</select>
 		            	</div>
 		          	</div>
@@ -172,7 +172,7 @@
 			            <label for="filter-priority" class="control-label">{l s='Priority' mod='wkuvdeskticketsystem'}</label>
 			            <div class="pos-relative">
 	            			<select name="filter-priority" id="filter-priority" class="wk-filter-ticket">
-	            				<option value="" {if $activePriority == ''}selected="selected"{/if}>{l s='All' mod='wkuvdeskticketsystem'}</option>
+	            				<option value="" data-action="priority" {if $activePriority == ''}selected="selected"{/if}>{l s='All' mod='wkuvdeskticketsystem'}</option>
 	              			</select>
 			            </div>
 			        </div>
@@ -180,23 +180,18 @@
 			            <label for="filter-type" class="control-label">{l s='Type' mod='wkuvdeskticketsystem'}</label>
 			            <div class="pos-relative">
 	            			<select name="filter-type" id="filter-type" class="wk-filter-ticket">
-	            				<option value="" {if $activeType == ''}selected="selected"{/if}>{l s='All' mod='wkuvdeskticketsystem'}</option>
+	            				<option value="" data-action="type" {if $activeType == ''}selected="selected"{/if}>{l s='All' mod='wkuvdeskticketsystem'}</option>
 	              			</select>
 			            </div>
 			        </div>
 			    </div>
 		    </div>
 			<div class="tabs col-md-9">
-				<div class="wk_text_right form-group">
-		        	<button id="wk-delete-tickets" class="btn btn-danger">
-		        		<i class="icon-trash-o"></i> {l s='Delete' mod='wkuvdeskticketsystem'}
-		        	</button>
-		        </div>
 				{if isset($ticketAllStatusData)}
 					<ul class="nav nav-tabs">
 						{foreach $ticketAllStatusData as $tstatus}
-							<li class="nav-item {if $tstatus->id == $tabStatus}active{/if}" style="font-size:11px;">
-								<a class="nav-link {if $tstatus->id == $tabStatus}active{/if}" href="{$current|escape:'htmlall':'UTF-8'}&status={$tstatus->id|escape:'htmlall':'UTF-8'}{if isset($activeLabel)}&label={$activeLabel|escape:'htmlall':'UTF-8'}{/if}&token={$token|escape:'htmlall':'UTF-8'}">
+							<li class="nav-item {if $tstatus->id == $tabStatus}active{/if}" style="{if $tstatus->id == '1'}border-left:1px solid #d3d8db !important;{/if}">
+								<a class="nav-link {if $tstatus->id == $tabStatus}active{/if}" {if $tstatus->id != $tabStatus}href="{$current}&status={$tstatus->id}{if isset($activeLabel)}&label={$activeLabel}{/if}&token={$token}{/if}">
 									{if $tstatus->id == '1'}
 										<i class="icon-inbox"></i>
 									{elseif $tstatus->id == '2'}
@@ -210,8 +205,8 @@
 									{else}
 										<i class="icon-ban"></i>
 									{/if}
-									{$tstatus->name|escape:'htmlall':'UTF-8'}
-									<span class="label label-primary">{$tabNumberofTickets->{$tstatus->id}}</span>
+									{$tstatus->name}
+									<span class="label {if $tstatus->id == $tabStatus}label-primary{else}label-default{/if}">{$tabNumberofTickets->{$tstatus->id}}</span>
 								</a>
 							</li>
 						{/foreach}
@@ -237,23 +232,23 @@
 								<tbody>
 									{if isset($customerTickets) && $customerTickets}
 										{foreach $customerTickets as $key => $tickets}
-											<tr class="{if $key%2 == 0}even{else}odd{/if}" id="wk_ticket_row_{$tickets->id|escape:'htmlall':'UTF-8'}">
-												<td><input type="checkbox" name="wk_uvdeskticket_list[]" value="{$tickets->id|escape:'htmlall':'UTF-8'}"></td>
+											<tr class="{if $key%2 == 0}even{else}odd{/if}" id="wk_ticket_row_{$tickets->id}">
+												<td><input type="checkbox" name="wk_uvdeskticket_list[]" value="{$tickets->id}"></td>
 												<td>
 													<strong>
-														<span style="color:{$tickets->priority->color};">{$tickets->priority->name|escape:'htmlall':'UTF-8'}</span>
+														<span style="color:{$tickets->priority->color};">{$tickets->priority->name}</span>
 													</strong>
 												</td>
-												<td>#{$tickets->incrementId|escape:'htmlall':'UTF-8'}</td>
-												<td>{$tickets->customer->name|escape:'htmlall':'UTF-8'}</td>
-												<td>{$tickets->subject|escape:'htmlall':'UTF-8'}</td>
-												<td>{$tickets->formatedCreatedAt|escape:'htmlall':'UTF-8'}</td>					
-												<td><center>{$tickets->totalThreads|escape:'htmlall':'UTF-8'}</center></td>
+												<td>#{$tickets->incrementId}</td>
+												<td>{$tickets->customer->name}</td>
+												<td>{$tickets->subject|truncate:30:'..':true:true}</td>
+												<td>{$tickets->formatedCreatedAt}</td>					
+												<td><center>{$tickets->totalThreads}</center></td>
 												<td>
 													<div class="getAllAgent"> 
 														{if isset($tickets->agent->name)}
 															{assign var=agent_name value=" "|explode:$tickets->agent->name}
-															<span class="badge badge-sm badge-primary"><i class="icon-pencil"></i></span> {$agent_name[0]|escape:'htmlall':'UTF-8'}
+															<span class="badge badge-sm badge-primary"><i class="icon-pencil"></i></span> {$agent_name[0]}
 														{else}
 															<button class="btn btn-success edit-ticket-agent"><i class="icon-plus-circle"></i> {l s='Agent' mod='wkuvdeskticketsystem'}</button>
 														{/if}
@@ -262,7 +257,7 @@
 												</td>
 												<td>
 													<center>
-													<a title="{l s='View' mod='wkuvdeskticketsystem'}" href="{$current|escape:'htmlall':'UTF-8'}&id={$tickets->incrementId|escape:'htmlall':'UTF-8'}&token={$token|escape:'htmlall':'UTF-8'}">
+													<a title="{l s='View' mod='wkuvdeskticketsystem'}" href="{$current}&id={$tickets->incrementId}&token={$token}">
 														<button class="btn btn-primary">
 															<i class="icon-eye"></i> {l s='View' mod='wkuvdeskticketsystem'}
 														</button>
@@ -279,6 +274,13 @@
 						</div>
 					</div>
 				</div>
+				{if isset($customerTickets) && $customerTickets}
+					<div class="form-group">
+						<button id="wk-delete-tickets" class="btn btn-danger">
+							<i class="icon-trash-o"></i> {l s='Delete' mod='wkuvdeskticketsystem'}
+						</button>
+					</div>
+				{/if}
 				<div class="content_sortPagiBar">
 					<div class="bottom-pagination-content clearfix">
 						{include file="$self/../../views/templates/front/uvdesk-pagination.tpl" paginationId='bottom'}
@@ -314,4 +316,5 @@
 	{addJsDefL name='all_expended'}{l s='All Expanded' mod='wkuvdeskticketsystem'}{/addJsDefL}
 	{addJsDefL name='show_more'}{l s='Show More' mod='wkuvdeskticketsystem'}{/addJsDefL}
 	{addJsDefL name='replied'}{l s='replied' mod='wkuvdeskticketsystem'}{/addJsDefL}
+	{addJsDefL name='no_result'}{l s='No result found' mod='wkuvdeskticketsystem'}{/addJsDefL}
 {/strip}

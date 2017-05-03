@@ -37,12 +37,12 @@
 						<button class="btn btn-success">{l s='Create Ticket' mod='wkuvdeskticketsystem'}</button>
 					</a>
 				</p>
-				<div class="tabs">
+				<div class="">
 					{if isset($ticketAllStatusData)}
 						<ul class="nav nav-tabs">
 							{foreach $ticketAllStatusData as $tstatus}
-								<li class="nav-item {if $tstatus->id == $tabStatus}active{/if}">
-									<a class="nav-link {if $tstatus->id == $tabStatus}active{/if}" href="{$link->getModuleLink('wkuvdeskticketsystem', 'customerticketlist', ['status' => $tstatus->id])}">
+								<li class="nav-item {if $tstatus->id == $tabStatus}active{/if}" style="{if $tstatus->id == '1'}border-left:1px solid #d3d8db !important;{/if}{if $tstatus->id == $tabStatus}border-right:1px solid #d3d8db !important;{/if}">
+									<a class="nav-link {if $tstatus->id == $tabStatus}active{/if}" {if $tstatus->id != $tabStatus}href="{$link->getModuleLink('wkuvdeskticketsystem', 'customerticketlist', ['status' => $tstatus->id])}"{/if}>
 										{if $tstatus->id == '1'}
 											<i class="material-icons">&#xE168;</i>
 										{elseif $tstatus->id == '2'}
@@ -57,7 +57,7 @@
 											<i class="material-icons">&#xE033;</i>
 										{/if}
 										{$tstatus->name}
-										<span class="label label-primary">{$tabNumberofTickets->{$tstatus->id}}</span>
+										<span class="label {if $tstatus->id == $tabStatus}label-primary{else}label-default{/if} wk-front-label">{$tabNumberofTickets->{$tstatus->id}}</span>
 									</a>
 								</li>
 							{/foreach}
@@ -88,16 +88,14 @@
 														</strong>
 													</td>
 													<td>#{$tickets->incrementId}</td>
-													<td>{$tickets->subject}</td>
+													<td>{$tickets->subject|truncate:30:'..':true:true}</td>
 													<td>{$tickets->formatedCreatedAt}</td>					
 													<td><center>{$tickets->totalThreads}</center></td>
 													<td>{if isset($tickets->agent->name)}<i class="material-icons">&#xE853;</i> {$tickets->agent->name}{else}-{/if}</td>
 													<td>
 														<center>
 														<a title="{l s='View' mod='wkuvdeskticketsystem'}" href="{$link->getModuleLink('wkuvdeskticketsystem', 'viewticket', ['id' => $tickets->incrementId])}">
-															<button class="btn btn-primary">
-																<i class="material-icons">&#xE417;</i>{l s='View' mod='wkuvdeskticketsystem'}
-															</button>
+															<i class="material-icons">&#xE417;</i> {l s='View' mod='wkuvdeskticketsystem'}
 														</a>
 														</center>
 													</td>

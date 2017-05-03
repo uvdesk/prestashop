@@ -21,17 +21,19 @@
 	<h3>{l s='Labels' mod='wkuvdeskticketsystem'}</h3>
 	{if isset($preDefinedLabels) && $preDefinedLabels}
       	{foreach $preDefinedLabels as $key => $value}
-          	<a href="{$current|escape:'htmlall':'UTF-8'}&label={$key|escape:'htmlall':'UTF-8'}&token={$token|escape:'htmlall':'UTF-8'}" style="{if isset($activeLabel)}{if $activeLabel == $key}font-weight:700;color:#434a54;{/if}{/if}">{ucfirst($key)}</a>
-          	<span class="label label-success">{$value|escape:'htmlall':'UTF-8'}</span>
-          	<br/>
+		  	<div>
+          		<a href="{$current|escape:'htmlall':'UTF-8'}&label={$key|escape:'htmlall':'UTF-8'}&token={$token|escape:'htmlall':'UTF-8'}" style="{if isset($activeLabel)}{if $activeLabel == $key}color:#434a54;{/if}{/if}">{ucfirst($key)}</a>
+          		<span class="label label-success">{$value|escape:'htmlall':'UTF-8'}</span>
+          	</div>
     	{/foreach}
     {/if}
 	{if isset($customerLabels) && $customerLabels}
     	<div class="showLabel">
             {foreach $customerLabels as $value}
-            	<a href="{$custom_label_url}{$value->id}" style="{if $activeCustomLabel == $value->id}font-weight:700;color:#434a54;{/if}">{ucfirst($value->name)}</a>
-            	<span class="label label-success" style="background-color: {$value->color|escape:'htmlall':'UTF-8'};">{$value->count|escape:'htmlall':'UTF-8'}</span>
-            	<br/>
+				<div>
+            		<a href="{$custom_label_url}{$value->id}" style="{if $activeCustomLabel == $value->id}color:#434a54;{/if}">{ucfirst($value->name)}</a>
+            		<span class="label label-success" style="background-color: {$value->color|escape:'htmlall':'UTF-8'};">{$value->count|escape:'htmlall':'UTF-8'}</span>
+            	</div>
             {/foreach}
       	</div>
     {/if}

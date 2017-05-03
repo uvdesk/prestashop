@@ -44,7 +44,7 @@
 		<div class="wk-module-page-title">
 			<span>{l s='View Ticket' mod='wkuvdeskticketsystem'}</span>
 		</div>
-		<div class="wk-module-container row">
+		<div class="wk-module-container">
 			<div class="col-md-3">
 		        <div class="panel panel-default">
 		          <div class="panel-body">
@@ -52,7 +52,7 @@
 		              	{if isset($ticket->collaborators) && $ticket->collaborators}
 			              	{foreach $ticket->collaborators as $collaborator}
 					            <div class="coll-div" id="coll-div-{$collaborator->id|escape:'htmlall':'UTF-8'}">
-					                <img src="{if $collaborator->smallThumbnail}{$collaborator->smallThumbnail|escape:'htmlall':'UTF-8'}{else}https://cdn.uvdesk.com/uvdesk/images/d94332c.png{/if}" class="img-responsive pull-left">
+					                <img src="{if $collaborator->smallThumbnail}{$collaborator->smallThumbnail|escape:'htmlall':'UTF-8'}{else}{$smarty.const._MODULE_DIR_}wkuvdeskticketsystem/views/img/wk-uvdesk-user.png{/if}" class="img-responsive pull-left">
 					                <span>
 					                	{if isset($collaborator->detail->agent)}{$collaborator->detail->agent->name|escape:'htmlall':'UTF-8'}{else}{$collaborator->detail->customer->name|escape:'htmlall':'UTF-8'}{/if}
 					                </span>
@@ -83,7 +83,7 @@
 		          </div>
 		        </div>
 		    </div>
-		    <div class="panel panel-default col-md-9">
+		    <div class="wk-left-border col-md-9">
 		        <div id="ticket-detail">
 			        <h4>
 			            #{if isset($ticket->incrementId)}{$ticket->incrementId|escape:'htmlall':'UTF-8'}{/if} {if isset($ticket->subject)}{$ticket->subject|escape:'htmlall':'UTF-8'}{/if}
@@ -112,7 +112,7 @@
 			        	<div class="">
 				            <div class="pull-left">
 				            	<span class="round-tabs">
-				                	<img src="{if isset($ticket->customer->profileImage)}{$ticket->customer->profileImage|escape:'htmlall':'UTF-8'}{else}https://cdn.uvdesk.com/uvdesk/images/d94332c.png{/if}">
+				                	<img src="{if isset($ticket->customer->profileImage)}{$ticket->customer->profileImage|escape:'htmlall':'UTF-8'}{else}{$smarty.const._MODULE_DIR_}wkuvdeskticketsystem/views/img/wk-uvdesk-user.png{/if}">
 				            	</span>
 				            </div>
 				            <div class="thread-info">
@@ -126,7 +126,7 @@
 			            <div class="thread-body">
 				            <div class="reply border-none">
 				                <div class="main-reply">
-				                	{if isset($ticket_reply)}{$ticket_reply|escape:'htmlall':'UTF-8'}{/if}
+				                	{if isset($ticket_reply)}{$ticket_reply}{/if}
 				                </div>
 				                {if isset($attachments) && $attachments}
 				                	<div class="attachments">
@@ -151,7 +151,7 @@
 		        	<div>
 			        	<div class="pull-left">
 				            <span class="round-tabs">
-				            	<img src="{if isset($ticket->customer->profileImage) && $ticket->customer->profileImage}{$ticket->customer->profileImage|escape:'htmlall':'UTF-8'}{else}https://cdn.uvdesk.com/uvdesk/images/d94332c.png{/if}">
+				            	<img src="{if isset($ticket->customer->profileImage) && $ticket->customer->profileImage}{$ticket->customer->profileImage|escape:'htmlall':'UTF-8'}{else}{$smarty.const._MODULE_DIR_}wkuvdeskticketsystem/views/img/wk-uvdesk-user.png{/if}">
 				            </span>
 			        	</div>
 			        	<div class="thread-info">
@@ -181,6 +181,7 @@
 		          	</div>
 		        </div>
 		    </div>
+			<div class="clearfix"></div>
 		</div>
 	</div>
 </div>

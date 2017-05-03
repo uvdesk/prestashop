@@ -68,7 +68,10 @@ class WkUvDeskTicketSystemCustomerTicketListModuleFrontController extends Module
                     $ticketList = $objUvdesk->getTickets($filterData);
                     if (isset($ticketList->tickets)) {
                         $customerTickets = (array) $ticketList->tickets;
-                        $objUvdesk->pagination($ticketList->pagination->totalCount); // total no. of tickets by status
+                        if ($ticketList->pagination->totalCount) {
+                            // total no. of tickets by status
+                            $objUvdesk->pagination($ticketList->pagination->totalCount, $ticketList->pagination->numItemsPerPage);
+                        }
 
                         $this->context->smarty->assign(array(
                                 'customerTickets' => $customerTickets,

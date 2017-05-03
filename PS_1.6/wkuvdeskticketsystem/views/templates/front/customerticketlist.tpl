@@ -43,8 +43,8 @@
 					{if isset($ticketAllStatusData)}
 						<ul class="nav nav-tabs">
 							{foreach $ticketAllStatusData as $tstatus}
-								<li class="nav-item {if $tstatus->id == $tabStatus}active{/if}">
-									<a class="nav-link {if $tstatus->id == $tabStatus}active{/if}" href="{$link->getModuleLink('wkuvdeskticketsystem', 'customerticketlist', ['status' => $tstatus->id])|escape:'htmlall':'UTF-8'}">
+								<li class="nav-item {if $tstatus->id == $tabStatus}active{/if}" style="{if $tstatus->id == '1'}border-left:1px solid #d3d8db !important;{/if}{if $tstatus->id == $tabStatus}border-right:1px solid #d3d8db !important;{/if}">
+									<a class="nav-link {if $tstatus->id == $tabStatus}active{/if}" {if $tstatus->id != $tabStatus}href="{$link->getModuleLink('wkuvdeskticketsystem', 'customerticketlist', ['status' => $tstatus->id])|escape:'htmlall':'UTF-8'}"{/if}>
 										{if $tstatus->id == '1'}
 											<i class="icon-inbox"></i>
 										{elseif $tstatus->id == '2'}
@@ -59,7 +59,7 @@
 											<i class="icon-ban"></i>
 										{/if}
 										{$tstatus->name|escape:'htmlall':'UTF-8'}
-										<span class="label label-primary">{$tabNumberofTickets->{$tstatus->id}}</span>
+										<span class="label {if $tstatus->id == $tabStatus}label-primary{else}label-default{/if} wk-front-label">{$tabNumberofTickets->{$tstatus->id}}</span>
 									</a>
 								</li>
 							{/foreach}
@@ -90,7 +90,7 @@
 														</strong>
 													</td>
 													<td>#{$tickets->incrementId|escape:'htmlall':'UTF-8'}</td>
-													<td>{$tickets->subject|escape:'htmlall':'UTF-8'}</td>
+													<td>{$tickets->subject|truncate:30:'..':true:true|escape:'htmlall':'UTF-8'}</td>
 													<td>{$tickets->formatedCreatedAt|escape:'htmlall':'UTF-8'}</td>					
 													<td><center>{$tickets->totalThreads|escape:'htmlall':'UTF-8'}</center></td>
 													<td>{if isset($tickets->agent->name)}<i class="icon-user"></i> {$tickets->agent->name|escape:'htmlall':'UTF-8'}{else}-{/if}</td>
