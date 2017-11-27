@@ -120,7 +120,6 @@ class WkUvDeskTicketSystemViewTicketModuleFrontController extends ModuleFrontCon
                 $success = 0;
                 $objUvdesk = new WkUvdeskHelper();
                 $ticketDetail = $objUvdesk->getTicket($incrementId);
-                d($ticketDetail);
                 if ($ticketDetail) {
                     if (isset($ticketDetail->ticket->id) && $ticketDetail->ticket->id == $ticketId) {
                         $addedSuccess = $objUvdesk->addCollaborator($ticketId, $collaboratorEmail);
