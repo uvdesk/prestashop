@@ -25,6 +25,7 @@ class AdminUvdeskTicketListController extends ModuleAdminController
         $this->context = Context::getContext();
         $this->bootstrap = true;
         parent::__construct();
+        $this->toolbar_title = $this->l('Manage Ticket List');
     }
 
     public function initContent()
@@ -42,11 +43,9 @@ class AdminUvdeskTicketListController extends ModuleAdminController
 
     public function renderForm()
     {
-        //tinymce setup
         $this->context->smarty->assign(array(
                 'self' => dirname(__FILE__),
-                'ad' => __PS_BASE_URI__.basename(_PS_ADMIN_DIR_),
-                'iso' => $this->context->language->iso_code,
+                'backendController' => 1,
             ));
 
         $objUvdesk = new WkUvdeskHelper();
@@ -65,6 +64,15 @@ class AdminUvdeskTicketListController extends ModuleAdminController
                     'customerLabels' => $ticketDetail->labels->custom,
                     'attachments' => $ticketDetail->createThread->attachments,
                 ));
+
+                //Get custom fields of this ticket
+                if (isset($ticketDetail->ticket->customFieldValues)) {
+                    $customFieldValues = WkUvdeskHelper::storeTicketCustomFieldValues($ticketDetail->ticket->customFieldValues);
+
+                    if ($customFieldValues) {
+                        $this->context->smarty->assign('customFieldValues', $customFieldValues);
+                    }
+                }
             }
         } else {
             //Ticket list page
@@ -157,6 +165,30 @@ class AdminUvdeskTicketListController extends ModuleAdminController
                     $objUvdesk->pagination($ticketList->pagination->totalCount, $ticketList->pagination->numItemsPerPage);
                 }
 
+                //get all agent members
+                $allAgentList = $objUvdesk->getMembers();
+                if ($allAgentList && $agent) {
+                    $currentAgent = array();
+                    foreach ($allAgentList as $agentList) {
+                        if ($agent == $agentList->id) {
+                            $currentAgent = (array) $agentList;
+                            break;
+                        }
+                    }
+
+                    //get current filter agent
+                    if ($currentAgent) {
+                        $this->context->smarty->assign('currentAgent', $currentAgent);
+                    }
+                }
+
+                //get current filter customer
+                if ($customer) {
+                    if ($currentCustomer = $objUvdesk->getCustomersById($customer)) {
+                        $this->context->smarty->assign('currentCustomer', $currentCustomer);
+                    }
+                }
+
                 $this->context->smarty->assign(array(
                         'customerTickets' => $customerTickets,
                         'ticketAllStatusData' => $ticketList->status,
@@ -166,6 +198,7 @@ class AdminUvdeskTicketListController extends ModuleAdminController
                         'tabStatus' => $status,
                         'activeLabel' => $label,
                         'activeAgent' => $agent,
+                        'activeCustomer' => $customer,
                         'activeGroup' => $group,
                         'activeTeam' => $team,
                         'activePriority' => $priority,
@@ -174,18 +207,21 @@ class AdminUvdeskTicketListController extends ModuleAdminController
                     ));
 
                 Media::addJsDef(array(
-                        'allAgentList' => $objUvdesk->getMembers(),
+                        'allAgentList' => $allAgentList,
                         'activeFilter' => Tools::jsonEncode($activeFilter),
                         'activeGroup' => $group,
                         'activeTeam' => $team,
                         'activePriority' => $priority,
                         'activeType' => $type,
+                        'activeAgent' => $agent,
+                        'activeCustomer' => $customer,
                     ));
             }
         }
 
         Media::addJsDef(array(
             'wk_uvdesk_user_img' => _MODULE_DIR_.'wkuvdeskticketsystem/views/img/wk-uvdesk-user.png',
+            'allowTinymce' => 1,
         ));
 
         $this->fields_form = array(
@@ -199,6 +235,7 @@ class AdminUvdeskTicketListController extends ModuleAdminController
 
     public function postProcess()
     {
+        //submit ticket reply
         if (Tools::isSubmit('submitReply')) {
             $incrementId = Tools::getValue('id'); //Increment Id is a ticket id for a particular company
             $ticketId = Tools::getValue('ticketId');
@@ -230,6 +267,46 @@ class AdminUvdeskTicketListController extends ModuleAdminController
             }
         }
 
+        //Add collaborator of ticket
+        if (Tools::isSubmit('submitCollaborator')) {
+            $incrementId = Tools::getValue('id'); //Increment Id is a ticket id for a particular company
+            $collaboratorEmail = Tools::getValue('collaboratorEmail');
+            $ticketId = Tools::getValue('ticketId');
+            if (!$collaboratorEmail) {
+                $this->errors[] = $this->l('Email is required field.');
+            } elseif (!Validate::isEmail($collaboratorEmail)) {
+                $this->errors[] = $this->l('Email must be valid.');
+            }
+
+            if (empty($this->errors)) {
+                $success = 0;
+                $objUvdesk = new WkUvdeskHelper();
+                $ticketDetail = $objUvdesk->getTicket($incrementId);
+                if ($ticketDetail) {
+                    if (isset($ticketDetail->ticket->id) && $ticketDetail->ticket->id == $ticketId) {
+                        $addedSuccess = $objUvdesk->addCollaborator($ticketId, $collaboratorEmail);
+                        $success = 1;
+                        if ($addedSuccess && isset($addedSuccess->collaborator->id)) {
+                            Tools::redirectAdmin(self::$currentIndex.'&id='.(int) $incrementId.'&conf=3&token='.$this->token);
+                        } else {
+                            if (isset($addedSuccess->error)) {
+                                if (isset($addedSuccess->description)) {
+                                    $this->errors[] = $addedSuccess->description;
+                                } else {
+                                    $this->errors[] = $addedSuccess->error;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                if (!$success) {
+                    $this->errors[] = $this->l('Something went wrong');
+                }
+            }
+        }
+
+        //Download attachment
         if (Tools::getValue('attach')) {
             $attachmentId = Tools::getValue('attach');
             $objUvdesk = new WkUvdeskHelper();
@@ -307,17 +384,17 @@ class AdminUvdeskTicketListController extends ModuleAdminController
         $objUvdesk = new WkUvdeskHelper();
         if ($filterAction == 'group') {
             $filterData = $objUvdesk->getFilteredData('group')->group; //uvdesk group
-        } else if ($filterAction == 'team') {
+        } elseif ($filterAction == 'team') {
             $filterData = $objUvdesk->getFilteredData('team')->team; //uvdesk team
-        } else if ($filterAction == 'priority') {
+        } elseif ($filterAction == 'priority') {
             $filterData = $objUvdesk->getFilteredData('priority')->priority; //uvdesk priority
-        } else if ($filterAction == 'type') {
+        } elseif ($filterAction == 'type') {
             $filterData = $objUvdesk->getFilteredData('type')->type; //uvdesk type
         }
         die(Tools::jsonEncode($filterData)); //ajax close
     }
 
-    public function displayAjaxGetTicketThreads()
+    public function ajaxProcessGetTicketThreads()
     {
         $ticketId = Tools::getValue('ticketId');
         if ($ticketId) {
@@ -335,17 +412,27 @@ class AdminUvdeskTicketListController extends ModuleAdminController
         die('0');
     }
 
+    public function ajaxProcessDeleteCollaborator()
+    {
+        $collaboratorId = Tools::getValue('collaborator_id');
+        $ticketId = Tools::getValue('ticketId');
+        if ($collaboratorId && $ticketId) {
+            $objUvdesk = new WkUvdeskHelper();
+            $deleteSuccess = $objUvdesk->removeCollaborator($ticketId, $collaboratorId);
+            $deleteSuccess = (array) $deleteSuccess;
+            if (!isset($deleteSuccess['error'])) {
+                die(Tools::jsonEncode($deleteSuccess));
+            }
+        }
+        die('0');
+    }
+
     public function setMedia()
     {
         parent::setMedia();
 
         //tinymce
-        $this->addJS(_PS_JS_DIR_.'tiny_mce/tiny_mce.js');
-        if (version_compare(_PS_VERSION_, '1.6.0.11', '>')) {
-            $this->addJS(_PS_JS_DIR_.'admin/tinymce.inc.js');
-        } else {
-            $this->addJS(_PS_JS_DIR_.'tinymce.inc.js');
-        }
+        $this->addJS("https://cloud.tinymce.com/stable/tinymce.min.js?apiKey=".Configuration::get('WK_UVDESK_TINYMCE_KEY'));
 
         $this->addCSS(_MODULE_DIR_.$this->module->name.'/views/css/uvdeskticketlist.css');
         $this->addJS(_MODULE_DIR_.$this->module->name.'/views/js/uvdeskticketlist.js');

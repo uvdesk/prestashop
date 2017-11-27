@@ -24,11 +24,19 @@
 	</p>
 {/if}
 {if isset($ticket)}
+	{*View ticket page*}
 	<div class="wk-module-block">
 		<div class="wk-module-content">
 			<div class="wk-module-container row">
 				<div class="col-md-3">
+					{*Display labels*}
 			    	{include file="$self/../../views/templates/admin/uvdeskticket-labels.tpl"}
+
+					{*Manage collaborator*}
+		        	{include file="$self/../../views/templates/front/_partials/add-collaborator.tpl"}
+
+					{*Display custom field if exist in ticket*}
+					{include file="$self/../../views/templates/front/_partials/display-custom-fields.tpl"}
 			    </div>
 			    <div class="wk-left-border col-md-9">
 			        <div id="ticket-detail">
@@ -74,7 +82,7 @@
 					                	{if isset($ticket_reply)}{$ticket_reply}{/if}
 					                </div>
 					                {if isset($attachments) && $attachments}
-					                	<div class="attachments">
+					                	<div class="attachments first-attach">
 						                	{foreach $attachments as $attachment}
 						                    	<a href="{$link->getAdminLink('AdminUvdeskTicketList')}&attach={$attachment->id|escape:'htmlall':'UTF-8'}">
 						                    		<i class="icon-download wk-attachment" data-attachment-id="{$attachment->id|escape:'htmlall':'UTF-8'}" title="{$attachment->name|escape:'htmlall':'UTF-8'}"></i>
@@ -105,7 +113,7 @@
 				        	<div class="clearfix"></div>
 				        </div>
 			        	<div class="thread-body">
-				            <div class="thread-info">
+				            <div class="thread-form">
 				              	<form action="{$current|escape:'htmlall':'UTF-8'}&id={$incrementId|escape:'htmlall':'UTF-8'}&token={$token|escape:'htmlall':'UTF-8'}" method="post" enctype="multipart/form-data">
 					                <input type="hidden" name="ticketId" value="{$ticketId|escape:'htmlall':'UTF-8'}">
 					                <div class="reply border-none" style="padding: 0;">
@@ -139,18 +147,30 @@
 		     	<div class="panel wk-uvdesk-search">
 			        <h3>{l s='Filter Tickets' mod='wkuvdeskticketsystem'}</h3>
 		          	<div>
-		            	<label for="filter-assigned" class="control-label">{l s='Assigned To' mod='wkuvdeskticketsystem'}</label>
+		            	<label for="filter-assigned" class="control-label">{l s='Agent' mod='wkuvdeskticketsystem'}</label>
 			            <div class="pos-relative" filter-type="agent">
-			            	<input type="text" placeholder="{l s='Enter Member name' mod='wkuvdeskticketsystem'}" class="form-control inputbox" id="filter-assigned">
+			            	<input type="text" placeholder="{l s='Type atleast one letter' mod='wkuvdeskticketsystem'}" class="form-control inputbox" id="filter-assigned">
 			            	<div class="wk-uvdesk-dropdown-menu open wk-agent-list" style="left:0;"></div>
 			            </div>
+					  	{if isset($currentAgent)}
+						  	<div class="btn btn-primary btn-sm selected_person closefilter" data-action="agent">
+								<span>X</span>
+						  		&nbsp;{$currentAgent.name|escape:'htmlall':'UTF-8'}
+							</div>
+						{/if}
 		          	</div>
 		         	<div>
 		           		<label for="filter-customer" class="control-label">{l s='Customer' mod='wkuvdeskticketsystem'}</label>
 		            	<div class="pos-relative">
-		              		<input type="text" placeholder="{l s='Enter Customer name' mod='wkuvdeskticketsystem'}" class="form-control inputbox" id="filter-customer">
+		              		<input type="text" placeholder="{l s='Type atleast one letter' mod='wkuvdeskticketsystem'}" class="form-control inputbox" id="filter-customer">
 		              		<div class="wk-uvdesk-dropdown-menu open wk-customer-list" style="left:0;"></div>
 		            	</div>
+						{if isset($currentCustomer->data['0']) }
+						  	<div class="btn btn-primary btn-sm selected_person closefilter" data-action="customer">
+								<span>X</span>
+						  		&nbsp;{$currentCustomer->data['0']->firstName|escape:'htmlall':'UTF-8'} {$currentCustomer->data['0']->lastName|escape:'htmlall':'UTF-8'}
+							</div>
+						{/if}
 		          	</div>
 		          	<div>
 		            	<label for="filter-group" class="control-label">{l s='Group' mod='wkuvdeskticketsystem'}</label>
@@ -206,7 +226,7 @@
 										<i class="icon-ban"></i>
 									{/if}
 									{$tstatus->name|escape:'htmlall':'UTF-8'}
-									<span class="label {if $tstatus->id == $tabStatus}label-primary{else}label-default{/if}">{$tabNumberofTickets->{$tstatus->id}}</span>
+									<span class="label {if $tstatus->id == $tabStatus}label-primary{else}label-default{/if}">{$tabNumberofTickets->{$tstatus->id}|escape:'htmlall':'UTF-8'}</span>
 								</a>
 							</li>
 						{/foreach}
@@ -236,7 +256,7 @@
 												<td><input type="checkbox" name="wk_uvdeskticket_list[]" value="{$tickets->id|escape:'htmlall':'UTF-8'}"></td>
 												<td>
 													<strong>
-														<span style="color:{$tickets->priority->color};">{$tickets->priority->name|escape:'htmlall':'UTF-8'}</span>
+														<span style="color:{$tickets->priority->color|escape:'htmlall':'UTF-8'};">{$tickets->priority->name|escape:'htmlall':'UTF-8'}</span>
 													</strong>
 												</td>
 												<td>#{$tickets->incrementId|escape:'htmlall':'UTF-8'}</td>
@@ -302,9 +322,6 @@
 		{addJsDef ticketId = $ticketId}
 	{/if}
 	{addJsDef backend_controller = 1}
-	{addJsDef iso = $iso}
-	{addJsDef ad = $ad}
-	{addJsDef pathCSS = $smarty.const._THEME_CSS_DIR_}
 	{addJsDef uvdesk_ticket_controller = $link->getAdminLink('AdminUvdeskTicketList')}
 	{addJsDefL name='confirm_delete'}{l s='Are you sure want to delete?' mod='wkuvdeskticketsystem'}{/addJsDefL}
 	{addJsDefL name='choose_one'}{l s='Select atleast one ticket' mod='wkuvdeskticketsystem'}{/addJsDefL}

@@ -111,7 +111,87 @@ class WkUvdeskHelper extends ObjectModel
     public function createTicket($data)
     {
         $url = 'tickets.json';
-        $ticket = $this->postApi($url, $data, 'POST');
+        
+        $type = $data['type'];
+        $name = $data['name'];
+        $from = $data['from'];
+        $subject = $data['subject'];
+        $reply = $data['reply'];
+        $customFields = $data['customFields'];
+
+        $lineEnd = "\r\n";
+        $mimeBoundary = md5(time());
+        $data = '--' . $mimeBoundary . $lineEnd;
+        $data .= 'Content-Disposition: form-data; name="type"' . $lineEnd . $lineEnd;
+        $data .= $type . $lineEnd;
+        $data .= '--' . $mimeBoundary . $lineEnd;
+        $data .= 'Content-Disposition: form-data; name="name"' . $lineEnd . $lineEnd;
+        $data .= $name . $lineEnd;
+        $data .= '--' . $mimeBoundary . $lineEnd;
+        $data .= 'Content-Disposition: form-data; name="from"' . $lineEnd . $lineEnd;
+        $data .= $from . $lineEnd;
+        $data .= '--' . $mimeBoundary . $lineEnd;
+        $data .= 'Content-Disposition: form-data; name="reply"' . $lineEnd . $lineEnd;
+        $data .= $reply . $lineEnd;
+        $data .= '--' . $mimeBoundary . $lineEnd;
+        $data .= 'Content-Disposition: form-data; name="subject"' . $lineEnd . $lineEnd;
+        $data .= $subject . $lineEnd;
+        $data .= '--' . $mimeBoundary . $lineEnd;
+
+        //Add attachment
+        $attachmentFile = $_FILES['attachment'];
+        if (isset($attachmentFile) && $attachmentFile) {
+            foreach ($attachmentFile['name'] as $key => $file) {
+                $fileType = $attachmentFile['type'][$key];
+                $fileName = $attachmentFile['name'][$key];
+                $fileTmpName = $attachmentFile['tmp_name'][$key];
+                if ($fileTmpName) {
+                    $data .= 'Content-Disposition: form-data; name="attachments[]"; filename="' . $fileName . '"' . $lineEnd;
+                    $data .= "Content-Type: $fileType" . $lineEnd . $lineEnd;
+                    $data .= Tools::file_get_contents($fileTmpName) . $lineEnd;
+                    $data .= '--' . $mimeBoundary . $lineEnd;
+                }
+            }
+        }
+
+        //Add custom field according to plan
+        if ($customFields) {
+            foreach ($customFields as $customFieldId => $customFieldValue) {
+                if ($customFieldValue) {
+                    if (is_array($customFieldValue)) {
+                        foreach ($customFieldValue as $customEachValue) {
+                            $data .= '--' . $mimeBoundary . $lineEnd;
+                            $data .= 'Content-Disposition: form-data; name="customFields['.$customFieldId.'][]"' . $lineEnd . $lineEnd;
+                            $data .= $customEachValue . $lineEnd;
+                        }
+                    } else {
+                        $data .= '--' . $mimeBoundary . $lineEnd;
+                        $data .= 'Content-Disposition: form-data; name="customFields['.$customFieldId.']"' . $lineEnd . $lineEnd;
+                        $data .= $customFieldValue . $lineEnd;
+                    }
+                }
+            }
+        }
+
+        //If file exist with custom field
+        if (isset($_FILES['customFields']) && $_FILES['customFields']) {
+            $customFieldsFile = $_FILES['customFields'];
+            foreach ($customFieldsFile['name'] as $customFileFieldId => $customFile) {
+                $customfileType = $customFieldsFile['type'][$customFileFieldId];
+                $customfileName = $customFieldsFile['name'][$customFileFieldId];
+                $customfileTmpName = $customFieldsFile['tmp_name'][$customFileFieldId];
+                if ($customfileTmpName) {
+                    $data .= '--' . $mimeBoundary . $lineEnd;
+                    $data .= 'Content-Disposition: form-data; name="customFields['.$customFileFieldId.']"; filename="' . $customfileName . '"' . $lineEnd;
+                    $data .= "Content-Type: $customfileType" . $lineEnd . $lineEnd;
+                    $data .= Tools::file_get_contents($customfileTmpName) . $lineEnd;
+                }
+            }
+        }
+
+        $data .= "--" . $mimeBoundary . "--" . $lineEnd . $lineEnd;
+        $ticket = $this->postApi($url, $data, 'POST', $mimeBoundary);
+        
         return $ticket;
     }
 
@@ -158,6 +238,20 @@ class WkUvdeskHelper extends ObjectModel
     public function getCustomers($name)
     {
         $url = 'customers.json?search=' . $name;
+        $ticket = $this->callApi($url);
+        return $ticket;
+    }
+
+    /**
+     * Get customer details by id
+     *
+     * @param string|bool $idCustomer - customer user id
+     *
+     * @return object response
+     */
+    public function getCustomersById($idCustomer)
+    {
+        $url = 'customer/'.$idCustomer.'.json';
         $ticket = $this->callApi($url);
         return $ticket;
     }
@@ -290,10 +384,12 @@ class WkUvdeskHelper extends ObjectModel
                 $fileType = $attachmentFile['type'][$key];
                 $fileName = $attachmentFile['name'][$key];
                 $fileTmpName = $attachmentFile['tmp_name'][$key];
-                $data .= 'Content-Disposition: form-data; name="attachments[]"; filename="' . $fileName . '"' . $lineEnd;
-                $data .= "Content-Type: $fileType" . $lineEnd . $lineEnd;
-                $data .= Tools::file_get_contents($fileTmpName) . $lineEnd;
-                $data .= '--' . $mimeBoundary . $lineEnd;
+                if ($fileTmpName) {
+                    $data .= 'Content-Disposition: form-data; name="attachments[]"; filename="' . $fileName . '"' . $lineEnd;
+                    $data .= "Content-Type: $fileType" . $lineEnd . $lineEnd;
+                    $data .= Tools::file_get_contents($fileTmpName) . $lineEnd;
+                    $data .= '--' . $mimeBoundary . $lineEnd;
+                }
             }
         }
         $data .= "--" . $mimeBoundary . "--" . $lineEnd . $lineEnd;
@@ -350,6 +446,23 @@ class WkUvdeskHelper extends ObjectModel
 
             return $downloadURL;
         }
+    }
+
+    /**
+     * Get all custom fields that allowed for member
+     *
+     * @return object response
+     */
+    public function checkCustomFields()
+    {
+        $url = 'custom-fields.json';
+
+        $customerFields = $this->callApi($url);
+        if (isset($customerFields['error'])) {
+            return false;
+        }
+
+        return $customerFields;
     }
 
     /**
@@ -444,11 +557,17 @@ class WkUvdeskHelper extends ObjectModel
         if ($info['http_code'] == 200 || $info['http_code'] == 201) {
             curl_close($ch);
             return json_decode($response);
-        } elseif ($info['http_code'] == 400) {
+        } elseif ($info['http_code'] == 400 || $info['http_code'] == 401) {
             curl_close($ch);
             return json_decode($response);
         } elseif ($info['http_code'] == 404) {
-            echo "Error, resource not found (http-code: 404) \n";
+            $response = '{"error":"invalid_grant","error_description":"Resource not found (http-code: 404)"}';
+            curl_close($ch);
+            return json_decode($response);
+        } elseif ($info['http_code'] == 0) { //wrong domain
+            $response = '{"error":"invalid_grant","error_description":"Domain name is invalid."}';
+            curl_close($ch);
+            return json_decode($response);
         } else {
             echo "Error, HTTP Status Code : " . $info['http_code'] . "\n";
             echo "Headers are ".$headers;
@@ -532,5 +651,31 @@ class WkUvdeskHelper extends ObjectModel
             'stop'              => $stop,
             'current_url'       => $current_url,
         ));
+    }
+
+    public static function storeTicketCustomFieldValues($ticketCustomFieldValues)
+    {
+        $customFieldValues = array();
+        if ($ticketCustomFieldValues) {
+            foreach ($ticketCustomFieldValues as $fieldKey => $fieldValues) {
+                $customFieldType = $fieldValues->ticketCustomFieldsValues->fieldType;
+
+                $customFieldValues[$fieldKey]['id'] = $fieldValues->id;
+                $customFieldValues[$fieldKey]['fieldName'] = $fieldValues->ticketCustomFieldsValues->name;
+                $customFieldValues[$fieldKey]['fieldType'] = $customFieldType;
+                $customFieldValues[$fieldKey]['value'] = $fieldValues->value;
+                $customFieldValues[$fieldKey]['visibleValues'] = $fieldValues->visibleValues;
+
+                if ($customFieldType == 'select' || $customFieldType == 'radio' || $customFieldType == 'checkbox') {
+                    if (isset($fieldValues->ticketCustomFieldValueValues->name)) {
+                        $customFieldValues[$fieldKey]['value'] = $fieldValues->ticketCustomFieldValueValues->name;
+                    }
+                } elseif ($customFieldType == 'file') {
+                    $customFieldValues[$fieldKey]['value'] = Tools::jsonDecode($fieldValues->value);
+                }
+            }
+        }
+
+        return $customFieldValues;
     }
 }

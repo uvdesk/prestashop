@@ -26,6 +26,42 @@ class WkUvDeskTicketSystemCreateTicketModuleFrontController extends ModuleFrontC
         if (isset($this->context->customer->id)
             && Configuration::get('WK_UVDESK_ACCESS_TOKEN')
             && Configuration::get('WK_UVDESK_COMPANY_DOMAIN')) {
+            $objUvdesk = new WkUvdeskHelper();
+            if (isset($objUvdesk->getFilteredData('type')->type)) {
+                $ticketTypes = $objUvdesk->getFilteredData('type')->type;
+                //Get Custom Fields if Plan allowed
+                $objUvdesk = new WkUvdeskHelper();
+                $customerAllFields = $objUvdesk->checkCustomFields();
+                if ($customerAllFields) {
+                    $nonDependentFields = array();
+                    $customerActiveFields = array();
+                    foreach ($customerAllFields as &$fields) {
+                        if ($fields->status == 1 && ($fields->agentType == 'customer' || $fields->agentType == 'both')) {
+                            $customerActiveFields[] = $fields;
+
+                            //Get all non dependent custom fields
+                            if (empty($fields->customFieldsDependency) && $fields->required == '1') {
+                                $nonDependentFields[] = $fields->id;
+                            }
+                        }
+                    }
+
+                    if ($nonDependentFields) {
+                        Media::addJsDef(array(
+                            'nonDependentFields' => Tools::jsonEncode($nonDependentFields),
+                        ));
+                    }
+                    
+                    $this->context->smarty->assign('customerActiveFields', $customerActiveFields);
+                }
+
+                $this->context->smarty->assign('ticketTypes', $ticketTypes);
+            }
+
+            Media::addJsDef(array(
+                'allowDatepicker' => 1,
+            ));
+
             $this->setTemplate('module:wkuvdeskticketsystem/views/templates/front/createticket.tpl');
         } else {
             Tools::redirect('index.php?controller=authentication&back='.urlencode($this->context->link->getModuleLink('wkuvdeskticketsystem', 'createticket')));
@@ -39,12 +75,41 @@ class WkUvDeskTicketSystemCreateTicketModuleFrontController extends ModuleFrontC
             $customerEmail = $this->context->customer->email;
             $subject = Tools::getValue('subject');
             $reply = Tools::getValue('message');
+            $ticketTypeExist = Tools::getValue('ticketTypeExist');
+            $ticketType = Tools::getValue('type');
 
+            if ($ticketTypeExist && !$ticketType) {
+                $this->errors[] = $this->module->l('Ticket Type is required field.', 'createticket');
+            }
             if (!$subject) {
                 $this->errors[] = $this->module->l('Subject is required field.', 'createticket');
             }
             if (!$reply) {
                 $this->errors[] = $this->module->l('Message is required field.', 'createticket');
+            }
+            
+            //Custom Field validation
+            $fieldRequired = false;
+            $customFields = Tools::getValue('customFields');
+            $requiedCustomFields = Tools::getValue('requiedCustomFields');
+            if ($requiedCustomFields && $customFields) {
+                $requiedCustomFields = explode(',', $requiedCustomFields);
+                foreach ($requiedCustomFields as $reqFieldId) {
+                    if (isset($customFields[$reqFieldId])) {
+                        if (!$customFields[$reqFieldId]) {
+                            $fieldRequired = true;
+                        }
+                    } else {
+                        //If custom file field is required
+                        if (isset($_FILES['customFields']['tmp_name'][$reqFieldId]) && $_FILES['customFields']['tmp_name'][$reqFieldId] == '') {
+                            $fieldRequired = true;
+                        }
+                    }
+                }
+            }
+
+            if ($fieldRequired) {
+                $this->errors[] = $this->module->l('Fill all mandatory fields.', 'createticket');
             }
 
             if (empty($this->errors)) {
@@ -53,13 +118,22 @@ class WkUvDeskTicketSystemCreateTicketModuleFrontController extends ModuleFrontC
                     'from'    => $customerEmail,
                     'subject' => $subject,
                     'reply'   => $reply,
-                    'type'    => '1', //1|2|3|4|5|6 for open|pending|resolved|closed|Spam|Answered repectively
+                    'type'    => $ticketType,
+                    'customFields' => $customFields,
                 );
 
                 $objUvdesk = new WkUvdeskHelper();
                 $tickets = $objUvdesk->createTicket($data);
                 if ($tickets && isset($tickets->ticketId) && $tickets->ticketId) {
                     Tools::redirect($this->context->link->getModuleLink('wkuvdeskticketsystem', 'customerticketlist', array('created' => 1)));
+                } elseif (isset($tickets->error)) {
+                    if (isset($tickets->error_description)) {
+                        $this->errors[] = $tickets->error_description;
+                    } else {
+                        $this->errors[] = $tickets->error;
+                    }
+                } else {
+                    $this->errors[] = $this->module->l('Some error occured', 'createticket');
                 }
             }
         }
@@ -84,6 +158,11 @@ class WkUvDeskTicketSystemCreateTicketModuleFrontController extends ModuleFrontC
     public function setMedia()
     {
         parent::setMedia();
+        $this->addJqueryUI('ui.datepicker');
+        $this->addJqueryUI(array('ui.slider', 'ui.datepicker'));
+        $this->context->controller->registerJavascript('wk_timepicker-js', 'js/jquery/plugins/timepicker/jquery-ui-timepicker-addon.js', array('position' => 'bottom', 'priority' => 1000));
+
         $this->registerStylesheet('uvdeskticketlist-css', 'modules/'.$this->module->name.'/views/css/uvdeskticketlist.css');
+        $this->registerJavascript('uvdeskticketlist-js', 'modules/'.$this->module->name.'/views/js/uvdeskticketlist.js');
     }
 }

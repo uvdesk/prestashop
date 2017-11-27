@@ -19,8 +19,7 @@
 
 {extends file=$layout}
 {block name='content'}
-<script type="text/javascript" src="{$smarty.const._MODULE_DIR_}wkuvdeskticketsystem/views/js/tinymce/tinymce.min.js"></script>
-<script type="text/javascript" src="{$smarty.const._MODULE_DIR_}wkuvdeskticketsystem/views/js/tinymce/tinymce_wk_setup.js"></script>
+
 {if isset($smarty.get.success)}
 	<p class="alert alert-success">
 		<button data-dismiss="alert" class="close" type="button">×</button>
@@ -40,43 +39,15 @@
 		</div>
 		<div class="wk-module-container">
 			<div class="col-md-3">
-		        <div class="panel panel-default">
-		          <div class="panel-body">
-		            <div id="collaborator-panel">
-		              	{if isset($ticket->collaborators) && $ticket->collaborators}
-			              	{foreach $ticket->collaborators as $collaborator}
-					            <div class="coll-div" id="coll-div-{$collaborator->id}">
-					                <img src="{if $collaborator->smallThumbnail}{$collaborator->smallThumbnail}{else}{$smarty.const._MODULE_DIR_}wkuvdeskticketsystem/views/img/wk-uvdesk-user.png{/if}" class="img-responsive pull-left">
-					                <span>
-					                	{if isset($collaborator->detail->agent)}{$collaborator->detail->agent->name}{else}{$collaborator->detail->customer->name}{/if}
-					                </span>
-					                <div class="pull-right removeCollaborator" data-col-id="{$collaborator->id}">
-					                	<i class="material-icons">&#xE872;</i>
-					                </div>
-					                <div class="clearfix"></div>
-					            </div>
-				           	{/foreach}
-				        {else}
-				        	{l s='There is no collaborator available for this ticket.' mod='wkuvdeskticketsystem'}
-				        {/if}
-		            </div>
-		            <form name="collaborator_form" action="{$link->getModuleLink('wkuvdeskticketsystem', 'viewticket', ['id' => $incrementId])}" method="post" enctype="multipart/form-data">
-						<input type="hidden" name="ticketId" value="{$ticketId}">
-		            	<div class="form-group">
-		              		<input type="email"
-		              		class="form-control"
-		              		name="collaboratorEmail"
-		              		id="collaboratorEmail"
-							style="font-size:13px;"
-							placeholder="{l s='Type e-mail to add collaborator...' mod='wkuvdeskticketsystem'}"
-		              		required>
-		              	</div>
-		              	<div class="form-group">
-		              		<button class="btn btn-success" type="submit" name="submitCollaborator">{l s='Add' mod='wkuvdeskticketsystem'}</button>
-		            	</div>
-		            </form>
-		          </div>
-		        </div>
+				{*Manage collaborator*}
+				{block name='add-collaborator'}
+					{include file='module:wkuvdeskticketsystem/views/templates/front/_partials/add-collaborator.tpl'}
+				{/block}
+
+				{*Display custom field if exist in ticket*}
+				{block name='display-custom-fields'}
+					{include file='module:wkuvdeskticketsystem/views/templates/front/_partials/display-custom-fields.tpl'}
+				{/block}
 		    </div>
 		    <div class="wk-left-border col-md-9">
 		        <div id="ticket-detail">
@@ -116,15 +87,15 @@
 					            </div>
 					            <div class="thread-info-row"></div>
 				            </div>
+			            	<div class="clearfix"></div>
 						</div>
-			            <div class="clearfix"></div>
 			            <div class="thread-body">
 				            <div class="reply border-none">
 				                <div class="main-reply">
 				                	{if isset($ticket_reply)}{$ticket_reply nofilter}{/if}
 				                </div>
 				                {if isset($attachments) && $attachments}
-				                	<div class="attachments">
+				                	<div class="attachments first-attach">
 					                	{foreach $attachments as $attachment}
 					                    	<a href="{$link->getModuleLink('wkuvdeskticketsystem', 'viewticket', ['attach' => $attachment->id])}">
 					                			<i class="material-icons wk-attachment" data-attachment-id="{$attachment->id}" title="{$attachment->name}">&#xE2C0;</i>
@@ -155,7 +126,7 @@
 			        	<div class="clearfix"></div>
 			        </div>
 		        	<div class="thread-body">
-			            <div class="thread-info">
+			            <div class="thread-form">
 			              	<form action="{$link->getModuleLink('wkuvdeskticketsystem', 'viewticket', ['id' => $incrementId])}" method="post" enctype="multipart/form-data">
 				                <input type="hidden" name="ticketId" value="{$ticketId}">
 				                <div class="reply border-none" style="padding: 0;">
@@ -164,7 +135,8 @@
 							    		<div class="labelWidget">
 							    			<i style="font-size:16px;" class="material-icons remove-file" onclick="$(this).parent().remove();">&#xE872;</i>
 											<label class="attach-file pointer"></label>
-											<input type="file" name="attachment[]" class="fileUpload" style="display: none;" >
+											{*In PS V1.6 uploader class automatically added but in PS V1.7, we need to add this class as a div *}
+											<div class="uploader" style="display:none;"><input type="file" name="attachment[]" class="fileUpload"></div>
 										</div>
 										<span id="addFile">+ {l s='Attach File' mod='wkuvdeskticketsystem'}</span>
 										<div class="clearfix"></div>

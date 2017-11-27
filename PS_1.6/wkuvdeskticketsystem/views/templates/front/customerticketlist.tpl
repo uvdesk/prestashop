@@ -59,7 +59,7 @@
 											<i class="icon-ban"></i>
 										{/if}
 										{$tstatus->name|escape:'htmlall':'UTF-8'}
-										<span class="label {if $tstatus->id == $tabStatus}label-primary{else}label-default{/if} wk-front-label">{$tabNumberofTickets->{$tstatus->id}}</span>
+										<span class="label {if $tstatus->id == $tabStatus}label-primary{else}label-default{/if} wk-front-label">{$tabNumberofTickets->{$tstatus->id}|escape:'htmlall':'UTF-8'}</span>
 									</a>
 								</li>
 							{/foreach}

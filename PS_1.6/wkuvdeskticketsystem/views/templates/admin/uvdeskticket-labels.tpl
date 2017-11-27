@@ -31,7 +31,7 @@
     	<div class="showLabel">
             {foreach $customerLabels as $value}
 				<div>
-            		<a href="{$custom_label_url}{$value->id}" style="{if $activeCustomLabel == $value->id}color:#434a54;{/if}">{ucfirst($value->name)}</a>
+            		<a href="{$custom_label_url|escape:'htmlall':'UTF-8'}{$value->id|escape:'htmlall':'UTF-8'}" style="{if $activeCustomLabel == $value->id}color:#434a54;{/if}">{ucfirst($value->name)|escape:'htmlall':'UTF-8'}</a>
             		<span class="label label-success" style="background-color: {$value->color|escape:'htmlall':'UTF-8'};">{$value->count|escape:'htmlall':'UTF-8'}</span>
             	</div>
             {/foreach}

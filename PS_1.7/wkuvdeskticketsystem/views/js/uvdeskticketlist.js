@@ -18,6 +18,31 @@
  */
 
 $(document).ready(function() {
+    //load Tinymce
+    if (typeof allowTinymce != 'undefined') {
+        tinymce.init({
+            selector: '.wk_tinymce'
+        });
+    }
+
+    if (typeof allowDatepicker != 'undefined') {
+        //Display datepicker
+        $('.wk-datepicker').datepicker({
+            dateFormat: "yy-mm-dd",
+        });
+
+        $('.wk-timepicker').timepicker({
+            timeFormat: 'hh:mm tt',
+            showSecond:true,
+            ampm: true
+        });
+
+        $('.wk-datetimepicker').datetimepicker({
+            dateFormat: "yy-mm-dd",
+            timeFormat: 'hh:mm:ss'
+        });
+    }
+    
     // on change of all checkbox
     $(document).on('change', '#wk_uvdeskticket_list_all', function() {
         $('input[name="wk_uvdeskticket_list[]"]').prop('checked', $(this).prop("checked"));
@@ -30,17 +55,9 @@ $(document).ready(function() {
         }
     });
 
-    if (typeof(backend_controller) != 'undefined') {
-        //Tinymce editor
-        tinySetup({
-            editor_selector: "wk_tinymce",
-            width: 720
-        });
-    }
-
     $(document).on('click', '.attach-file', function() {
-        var child = $(this).next('.uploader').children('.fileUpload');
-        child.trigger('click');
+        var fileattach = $(this).next('.uploader').children('.fileUpload');
+        fileattach.trigger('click');
     });
 
     $('#addFile').on('click', function() {
@@ -168,6 +185,13 @@ $(document).ready(function() {
         var filteraction = $(this).find(':selected').data('action');
 
         var extraParams = '';
+
+        if (activeAgent != '') {
+            extraParams += '&agent=' + activeAgent;
+        }
+        if (activeCustomer != '') {
+            extraParams += '&customer=' + activeCustomer;
+        }
         if (activeGroup != '' && filteraction != 'group') {
             extraParams += '&group=' + activeGroup;
         }
@@ -305,6 +329,80 @@ $(document).ready(function() {
             loadTicketThreads(ticketId, threadPage);
         });
     }
+
+    //Hide and show custom fields according to ticket type on create ticket page
+    // Also add and remove required attribute for validation
+    $(document).on('change', '#ticket-type', function() {
+        var typeId = $(this).val();
+        if (typeId) {
+            $('.wk-dependent').hide();
+
+            //remove required valiation from all dependent custom field
+            $.each($('.wk-dependent'), function(resindex, resvalue) {
+                var customFieldId = $(this).attr('data-custom-field');
+                $('input[name="customFields[' + customFieldId + ']"]').removeAttr("required");
+            });
+
+            //Get all required fields according to ticket type
+            if (typeof nonDependentFields != 'undefined') {
+                var allRequiredFields = jQuery.parseJSON(nonDependentFields);
+            } else {
+                var allRequiredFields = [];
+            }
+
+            var allDependentDiv = $('.wk-dependent' + typeId);
+            $.each(allDependentDiv, function(reskey, resval) {
+                var customFieldId = $(this).attr('data-custom-field');
+                if ($(this).attr('data-required') == '1') {
+                    //required condition in dependent custom field of select type
+                    $('input[name="customFields[' + customFieldId + ']"]').attr("required", "required");
+
+                    allRequiredFields.push(customFieldId);
+                }
+            });
+
+            $('input[name="requiedCustomFields"]').val(allRequiredFields);
+            $('.wk-dependent' + typeId).show();
+        }
+    });
+
+    //Change checkbox required validation
+    var requiredCheckboxes = $('.wk-form-checkbox :checkbox[required]');
+    requiredCheckboxes.change(function() {
+        if (requiredCheckboxes.is(':checked')) {
+            requiredCheckboxes.removeAttr('required');
+        } else {
+            requiredCheckboxes.attr('required', 'required');
+        }
+    });
+
+    //delete filter of agent or customer in backend
+    $(document).on('click', '.closefilter', function() {
+        var closefilteraction = $(this).data('action');
+
+        var extraParams = '';
+
+        if (activeAgent != '' && closefilteraction != 'agent') {
+            extraParams += '&agent=' + activeAgent;
+        }
+        if (activeCustomer != '' && closefilteraction != 'customer') {
+            extraParams += '&customer=' + activeCustomer;
+        }
+        if (activeGroup != '' && closefilteraction != 'group') {
+            extraParams += '&group=' + activeGroup;
+        }
+        if (activeTeam != '' && closefilteraction != 'team') {
+            extraParams += '&team=' + activeTeam;
+        }
+        if (activePriority != '' && closefilteraction != 'priority') {
+            extraParams += '&priority=' + activePriority;
+        }
+        if (activeType != '' && closefilteraction != 'type') {
+            extraParams += '&type=' + activeType;
+        }
+
+        window.location.href = uvdesk_ticket_controller + extraParams;
+    });
 });
 
 function loadTicketThreads(ticketId, threadPage) {
@@ -323,10 +421,10 @@ function loadTicketThreads(ticketId, threadPage) {
                 ajax: true
             },
             success: function(resultThreads) {
-                if (resultThreads != '0') {
+                if (resultThreads !== null && resultThreads != '0') {
                     var threadHTML = '';
                     $.each(resultThreads.threads, function(tindex, thread) {
-                        threadHTML += '<div class="thread"><div class="col-sm-12 thread-created-info text-center"><span class="info"><span id="thread' + thread.user.id + '" class="copy-thread-link">#' + thread.user.id + '</span> ' + thread.fullname + ' ' + replied + '</span><span class="text-right date pull-right">' + thread.formatedCreatedAt + '</span></div><div class="col-sm-12"><div class=""><div class="pull-left"><span class="round-tabs">';
+                        threadHTML += '<div class="thread"><div class="col-sm-12 thread-created-info text-center"><span class="info"><span id="thread' + thread.id + '" class="copy-thread-link">#' + thread.id + '</span> ' + thread.fullname + ' ' + replied + '</span><span class="text-right date pull-right">' + thread.formatedCreatedAt + '</span></div><div class="col-sm-12"><div class=""><div class="pull-left"><span class="round-tabs">';
                         if (thread.user.smallThumbnail) {
                             threadHTML += '<img src="' + thread.user.smallThumbnail + '">';
                         } else {
@@ -372,12 +470,31 @@ function loadTicketThreads(ticketId, threadPage) {
     }
 }
 
+//filter agent
 function getAllAgentList(agentHTML, allAgentDetails, filterAgent) {
     agentHTML += '<div class="get-agent-list"><ul class="wk-uvdesk-dropdown-menu inner" role="listbox" aria-expanded="true">';
     if (allAgentDetails) {
+        var extraParams = '';
+
+        if (activeCustomer != '') {
+            extraParams += '&customer=' + activeCustomer;
+        }
+        if (activeGroup != '') {
+            extraParams += '&group=' + activeGroup;
+        }
+        if (activeTeam != '') {
+            extraParams += '&team=' + activeTeam;
+        }
+        if (activePriority != '') {
+            extraParams += '&priority=' + activePriority;
+        }
+        if (activeType != '') {
+            extraParams += '&type=' + activeType;
+        }
+
         $.each(allAgentDetails, function(index, agentDetail) {
             if (filterAgent) { //if search by filter
-                agentHTML += '<li><a href="' + uvdesk_ticket_controller + '&agent=' + agentDetail.id + '">';
+                agentHTML += '<li><a href="' + uvdesk_ticket_controller + extraParams + '&agent=' + agentDetail.id + '">';
             } else {
                 agentHTML += '<li class="assignAgentBtn" data-member-id="' + agentDetail.id + '" data-name="' + agentDetail.name + '"><a>';
             }
@@ -467,11 +584,30 @@ function filterTickets(search_name, filterValue) {
     }
 }
 
+//filter customer and other
 function getAllFilteredList(filterHTML, allFilterDetails, filterValue) {
     filterHTML += '<div class="get-' + filterValue + '-list"><ul class="wk-uvdesk-dropdown-menu inner" role="listbox" aria-expanded="true">';
     if (allFilterDetails) {
+        var extraParams = '';
+
+        if (activeAgent != '') {
+            extraParams += '&agent=' + activeAgent;
+        }
+        if (activeGroup != '') {
+            extraParams += '&group=' + activeGroup;
+        }
+        if (activeTeam != '') {
+            extraParams += '&team=' + activeTeam;
+        }
+        if (activePriority != '') {
+            extraParams += '&priority=' + activePriority;
+        }
+        if (activeType != '') {
+            extraParams += '&type=' + activeType;
+        }
+        
         $.each(allFilterDetails, function(index, filterDetail) {
-            filterHTML += '<li><a href="' + uvdesk_ticket_controller + '&' + filterValue + '=' + filterDetail.id + '">';
+            filterHTML += '<li><a href="' + uvdesk_ticket_controller + extraParams + '&' + filterValue + '=' + filterDetail.id + '">';
             if (filterDetail.smallThumbnail) {
                 filterHTML += '<span class="round-tabs two"><img src="' + filterDetail.smallThumbnail + '"></span>';
             } else {

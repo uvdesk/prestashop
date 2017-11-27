@@ -33,7 +33,7 @@ class WkUvDeskTicketSystem extends Module
         $this->author = 'Webkul';
         $this->need_instance = 0;
         $this->bootstrap = true;
-        $this->version = '1.0.0';
+        $this->version = '1.0.1';
         $this->ps_versions_compliancy = array('min' => '1.6', 'max' => _PS_VERSION_);
         $this->confirmUnistall = $this->l('Are you sure you want to uninstall this module?');
         parent::__construct();
@@ -60,10 +60,20 @@ class WkUvDeskTicketSystem extends Module
         }
     }
 
+    public function hookDisplayNav()
+    {
+        if (Configuration::get('WK_UVDESK_ACCESS_TOKEN')
+            && Configuration::get('WK_UVDESK_COMPANY_DOMAIN')) {
+            $this->context->smarty->assign('ticketLink', $this->context->link->getModuleLink('wkuvdeskticketsystem', 'createticket'));
+
+            return $this->display(__FILE__, 'ticket_nav.tpl');
+        }
+    }
+
     public function registerModuleHook()
     {
         return $this->registerHook(array(
-                'displayCustomerAccount', 'displayBackOfficeHeader'
+                'displayCustomerAccount', 'displayBackOfficeHeader', 'displayNav'
             ));
     }
 
@@ -71,6 +81,7 @@ class WkUvDeskTicketSystem extends Module
     {
         if (!parent::install()
             || !$this->registerModuleHook()
+            || !Configuration::updateValue('WK_UVDESK_TINYMCE_KEY', '0gvf38pq1y5zocjdzbz6koo08r423iy62dqm3wa3wsutrwmu')
             || !$this->callInstallTab()
             ) {
             return false;
@@ -108,7 +119,7 @@ class WkUvDeskTicketSystem extends Module
     
     public function deleteConfigKeys()
     {
-        $moduleConfigData = array('WK_UVDESK_ACCESS_TOKEN', 'WK_UVDESK_COMPANY_DOMAIN');
+        $moduleConfigData = array('WK_UVDESK_ACCESS_TOKEN', 'WK_UVDESK_COMPANY_DOMAIN', 'WK_UVDESK_TINYMCE_KEY');
         foreach ($moduleConfigData as $moduleConfigKey) {
             if (!Configuration::deleteByName($moduleConfigKey)) {
                 return false;

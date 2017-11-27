@@ -43,16 +43,29 @@ class WkUvDeskTicketSystemViewTicketModuleFrontController extends ModuleFrontCon
                                 'self' => dirname(__FILE__),
                             ));
 
+                            //Get custom fields of this ticket
+                            if (isset($ticketDetail->ticket->customFieldValues)) {
+                                $customFieldValues = WkUvdeskHelper::storeTicketCustomFieldValues($ticketDetail->ticket->customFieldValues);
+
+                                if ($customFieldValues) {
+                                    $this->context->smarty->assign('customFieldValues', $customFieldValues);
+                                }
+                            }
+
                             Media::addJsDef(array(
-                                    'wk_tinymce_path' => _MODULE_DIR_.'wkuvdeskticketsystem/libs',
                                     'wk_uvdesk_user_img' => _MODULE_DIR_.'wkuvdeskticketsystem/views/img/wk-uvdesk-user.png',
                                     'iso' => $this->context->language->iso_code,
+                                    'allowTinymce' => 1,
                                 ));
                         
                             $this->setTemplate('viewticket.tpl');
+                        } else {
+                            Tools::redirect($this->context->link->getPageLink('pagenotfound'));
                         }
                     }
                 }
+            } else {
+                Tools::redirect($this->context->link->getPageLink('pagenotfound'));
             }
         } else {
             Tools::redirect('index.php?controller=authentication&back='.urlencode($this->context->link->getModuleLink('wkuvdeskticketsystem', 'customerticketlist')));
@@ -61,6 +74,7 @@ class WkUvDeskTicketSystemViewTicketModuleFrontController extends ModuleFrontCon
 
     public function postProcess()
     {
+        //submit ticket reply
         if (Tools::isSubmit('submitReply')) {
             $incrementId = Tools::getValue('id'); //Increment Id is a ticket id for a particular company
             $ticketId = Tools::getValue('ticketId');
@@ -91,6 +105,7 @@ class WkUvDeskTicketSystemViewTicketModuleFrontController extends ModuleFrontCon
             }
         }
         
+        //Add collaborator of ticket
         if (Tools::isSubmit('submitCollaborator')) {
             $incrementId = Tools::getValue('id'); //Increment Id is a ticket id for a particular company
             $collaboratorEmail = Tools::getValue('collaboratorEmail');
@@ -105,6 +120,7 @@ class WkUvDeskTicketSystemViewTicketModuleFrontController extends ModuleFrontCon
                 $success = 0;
                 $objUvdesk = new WkUvdeskHelper();
                 $ticketDetail = $objUvdesk->getTicket($incrementId);
+                d($ticketDetail);
                 if ($ticketDetail) {
                     if (isset($ticketDetail->ticket->id) && $ticketDetail->ticket->id == $ticketId) {
                         $addedSuccess = $objUvdesk->addCollaborator($ticketId, $collaboratorEmail);
@@ -113,7 +129,11 @@ class WkUvDeskTicketSystemViewTicketModuleFrontController extends ModuleFrontCon
                             Tools::redirect($this->context->link->getModuleLink('wkuvdeskticketsystem', 'viewticket', array('id' => $incrementId, 'success_col' => $success)));
                         } else {
                             if (isset($addedSuccess->error)) {
-                                $this->errors[] = $addedSuccess->description;
+                                if (isset($addedSuccess->description)) {
+                                    $this->errors[] = $addedSuccess->description;
+                                } else {
+                                    $this->errors[] = $addedSuccess->error;
+                                }
                             }
                         }
                     }
@@ -125,6 +145,7 @@ class WkUvDeskTicketSystemViewTicketModuleFrontController extends ModuleFrontCon
             }
         }
 
+        //Download attachment
         if (Tools::getValue('attach')) {
             $attachmentId = Tools::getValue('attach');
             $objUvdesk = new WkUvdeskHelper();
@@ -169,6 +190,9 @@ class WkUvDeskTicketSystemViewTicketModuleFrontController extends ModuleFrontCon
     public function setMedia()
     {
         parent::setMedia();
+        //tinymce
+        $this->addJS("https://cloud.tinymce.com/stable/tinymce.min.js?apiKey=".Configuration::get('WK_UVDESK_TINYMCE_KEY'));
+        
         $this->addCSS(_MODULE_DIR_.$this->module->name.'/views/css/uvdeskticketlist.css');
         $this->addJS(_MODULE_DIR_.$this->module->name.'/views/js/uvdeskticketlist.js');
     }

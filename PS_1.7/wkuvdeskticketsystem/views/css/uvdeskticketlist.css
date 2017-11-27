@@ -327,6 +327,10 @@
     border: none;
 }
 
+.first-attach {
+    padding: 20px 3px 5px 0px !important;
+}
+
 .attachments {
     padding: 5px 30px;
 }
@@ -569,4 +573,60 @@ label.required::before {
     font-size: 14px;
     position: relative;
     line-height: 12px;
+}
+
+.thread-form {
+    padding: 7px;
+}
+
+
+/*Custom field CSS */
+
+.wk-dependent {
+    display: none;
+}
+
+.wk-custom-field-heading {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 21px;
+    text-transform: uppercase;
+}
+
+.wk-custom-field-container {
+    max-height: 1000px;
+    overflow: auto;
+    padding-right: 10px;
+}
+
+.wk-custom-field-display {
+    margin: 10px 0 0;
+}
+
+.wk-field-block {
+    background: #ebebe4 none repeat scroll 0 0;
+    border: 1px solid #b1b1ae;
+    border-radius: 3px;
+    color: #333333;
+    font-size: 15px;
+    margin-bottom: 15px;
+    padding: 8px 10px;
+    width: 100%;
+    word-wrap: break-word;
+}
+
+.selected_person {
+    margin: 10px 0 !important;
+    padding: 4px !important;
+}
+
+
+/*Hide tinymce content*/
+
+.mce-notification {
+    display: none !important;
+}
+
+.mce-branding-powered-by {
+    display: none !important;
 }

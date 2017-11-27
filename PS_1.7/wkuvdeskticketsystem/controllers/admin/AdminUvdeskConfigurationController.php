@@ -27,6 +27,7 @@ class AdminUvdeskConfigurationController extends ModuleAdminController
         $this->table = 'configuration';
 
         parent::__construct();
+        $this->toolbar_title = $this->l('Set Configuration');
         $this->fields_options = array(
             'Configuration' => array(
                 'title' => $this->l('General Configuration'),
@@ -42,6 +43,7 @@ class AdminUvdeskConfigurationController extends ModuleAdminController
                         'type' => 'text',
                         'title' => $this->l('Company Domain'),
                         'hint' => $this->l('Specify your company Domain Name'),
+                        'suffix' => '.uvdesk.com',
                         'required' => true,
                         'autocomplete' => false,
                     ),
