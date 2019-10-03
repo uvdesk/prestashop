@@ -427,9 +427,9 @@ class AdminUvdeskTicketListController extends ModuleAdminController
         die('0');
     }
 
-    public function setMedia()
+    public function setMedia($isNewTheme = false)
     {
-        parent::setMedia();
+        parent::setMedia($isNewTheme);
 
         //tinymce
         $this->addJS("https://cloud.tinymce.com/stable/tinymce.min.js?apiKey=".Configuration::get('WK_UVDESK_TINYMCE_KEY'));
