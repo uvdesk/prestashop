@@ -1,5 +1,5 @@
 {*
-* 2010-2017 Webkul.
+* 2010-2019 Webkul.
 *
 * NOTICE OF LICENSE
 *
@@ -13,7 +13,7 @@
 * needs please refer to https://store.webkul.com/customisation-guidelines/ for more information.
 *
 *  @author    Webkul IN <support@webkul.com>
-*  @copyright 2010-2017 Webkul IN
+*  @copyright 2010-2019 Webkul IN
 *  @license   https://store.webkul.com/license.html
 *}
 
@@ -262,10 +262,10 @@
 												<td>#{$tickets->incrementId}</td>
 												<td>{$tickets->customer->name}</td>
 												<td>{$tickets->subject|truncate:30:'..':true:true}</td>
-												<td>{$tickets->formatedCreatedAt}</td>					
+												<td>{$tickets->formatedCreatedAt}</td>
 												<td><center>{$tickets->totalThreads}</center></td>
 												<td>
-													<div class="getAllAgent"> 
+													<div class="getAllAgent">
 														{if isset($tickets->agent->name)}
 															{assign var=agent_name value=" "|explode:$tickets->agent->name}
 															<span class="badge badge-sm badge-primary"><i class="icon-pencil"></i></span> {$agent_name[0]}

@@ -1,0 +1,62 @@
+##########################################################################
+Change Log : V4.0.1 To V4.0.2 | COMPATIBLE:: PRESTASHOP V1.7
+##########################################################################
+
+## Update Policy :
+	- Module need only file update, can be updated only by UPLOADING new version on module
+
+## Bug Fixed:
+	- While customer create ticket then it should be created on behalf of customer, not for agent
+
+## Improvements:
+	- Module translation is available in following languages: French (fr), Arabic(ar), Spanish(es), German(de), Italian(It), Russian(ru), Japanese(ja), Dutch(nl), Bulgarian (bg), Portuguese (pt).
+
+
+##########################################################################
+Change Log : V4.0.0 To V4.0.1 | COMPATIBLE:: PRESTASHOP V1.7
+##########################################################################
+
+## Update Policy :
+	– Module need only file update, can be updated only by UPLOADING new version on module
+
+## Bug Fixed:
+	- Customer can create ticket in multiple ticket type set by uvdesk account
+	- Display thread id instead of user id on view ticket page
+	- Display error on create ticket if admin credentials are not valid.
+	- All filter in Backend will be work together
+	- Display Agent name and customer name after filter
+
+## Improvements
+	- Customer can see 'create ticket' button on top nav at front end
+	- Customer can add attachment when create ticket.
+	- Remove tinymce library and use cdn with key for tinymce
+	- Customer can fill custom fields on create ticket page created through Uvdesk account on the basis of Plan
+	- Admin can also add collaborator on view ticket page
+
+
+##########################################################################
+Change Log : V1.0.0 To V4.0.0 | COMPATIBLE:: PRESTASHOP V1.7
+##########################################################################
+
+## Compatibiltiy
+	- Module compatible with Prestashop V1.7
+
+
+##########################################################################
+Change Log : V1.0.0 | COMPATIBLE:: PRESTASHOP V1.6
+##########################################################################
+
+## Added Features:
+
+- [+]FO :
+	- Customer can create ticket from my account page
+	- Customer can view ticket list by Open, Pending, Closed etc.
+	- Customer can reply on ticket with attachment.
+	- Customer can add and delete collaborator for ticket
+- [+]BO :
+	- Admin can view ticket list by Open, Pending, Closed etc.
+	- Admin can reply on ticket with attachment.
+	- Admin can delete tickets
+	- Admin can check tickets by Labels ie All, unassgined, trashed etc.
+	- Admin can filter tickets by agent, customer, type etc.
+	- Admin can assign ticket to agent

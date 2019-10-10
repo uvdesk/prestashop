@@ -1,6 +1,6 @@
 <?php
 /**
-* 2010-2017 Webkul.
+* 2010-2019 Webkul.
 *
 * NOTICE OF LICENSE
 *
@@ -14,7 +14,7 @@
 * needs please refer to https://store.webkul.com/customisation-guidelines/ for more information.
 *
 *  @author    Webkul IN <support@webkul.com>
-*  @copyright 2010-2017 Webkul IN
+*  @copyright 2010-2019 Webkul IN
 *  @license   https://store.webkul.com/license.html
 */
 
@@ -32,7 +32,8 @@ class WkUvDeskTicketSystemViewTicketModuleFrontController extends ModuleFrontCon
                 if ($uvdeskCustomerId = $uvdeskCustomers->customers[0]->id) {
                     if ($incrementId = Tools::getValue('id')) { //Increment Id is a ticket id for a particular company
                         $ticketDetail = $objUvdesk->getTicket($incrementId);
-                        if (isset($ticketDetail->ticket->customer->id) && ($ticketDetail->ticket->customer->id == $uvdeskCustomerId)) {
+                        if (isset($ticketDetail->ticket->customer->id)
+                        && ($ticketDetail->ticket->customer->id == $uvdeskCustomerId)) {
                             $this->context->smarty->assign(array(
                                 'incrementId' => $incrementId,
                                 'ticket' => $ticketDetail->ticket,
@@ -45,7 +46,9 @@ class WkUvDeskTicketSystemViewTicketModuleFrontController extends ModuleFrontCon
 
                             //Get custom fields of this ticket
                             if (isset($ticketDetail->ticket->customFieldValues)) {
-                                $customFieldValues = WkUvdeskHelper::storeTicketCustomFieldValues($ticketDetail->ticket->customFieldValues);
+                                $customFieldValues = WkUvdeskHelper::storeTicketCustomFieldValues(
+                                    $ticketDetail->ticket->customFieldValues
+                                );
 
                                 if ($customFieldValues) {
                                     $this->context->smarty->assign('customFieldValues', $customFieldValues);
@@ -53,20 +56,24 @@ class WkUvDeskTicketSystemViewTicketModuleFrontController extends ModuleFrontCon
                             }
 
                             Media::addJsDef(array(
-                                    'wk_uvdesk_user_img' => _MODULE_DIR_.'wkuvdeskticketsystem/views/img/wk-uvdesk-user.png',
-                                    'iso' => $this->context->language->iso_code,
-                                    'allowTinymce' => 1,
-                                    'ticketId' => $ticketDetail->ticket->id,
-                                    'uvdesk_ticket_controller' => $this->context->link->getModuleLink('wkuvdeskticketsystem', 'viewticket', array('id' => $incrementId)),
-                                    'confirm_delete' => $this->module->l('Are you sure want to delete?', 'viewticket'),
-                                    'max_file' => $this->module->l('Maximum Number of file is ', 'viewticket'),
-                                    'invalid_file' => $this->module->l('Invalid file type or size', 'viewticket'),
-                                    'some_error' => $this->module->l('Some error occured', 'viewticket'),
-                                    'all_expended' => $this->module->l('All Expanded', 'viewticket'),
-                                    'show_more' => $this->module->l('Show More', 'viewticket'),
-                                    'replied' => $this->module->l('replied', 'viewticket'),
-                                ));
-                        
+                                'wk_uvdesk_user_img' => _MODULE_DIR_.'wkuvdeskticketsystem/views/img/wk-uvdesk-user.png',
+                                'iso' => $this->context->language->iso_code,
+                                'allowTinymce' => 1,
+                                'ticketId' => $ticketDetail->ticket->id,
+                                'uvdesk_ticket_controller' => $this->context->link->getModuleLink(
+                                    'wkuvdeskticketsystem',
+                                    'viewticket',
+                                    array('id' => $incrementId)
+                                ),
+                                'confirm_delete' => $this->module->l('Are you sure want to delete?', 'viewticket'),
+                                'max_file' => $this->module->l('Maximum Number of file is ', 'viewticket'),
+                                'invalid_file' => $this->module->l('Invalid file type or size', 'viewticket'),
+                                'some_error' => $this->module->l('Some error occured', 'viewticket'),
+                                'all_expended' => $this->module->l('All Expanded', 'viewticket'),
+                                'show_more' => $this->module->l('Show More', 'viewticket'),
+                                'replied' => $this->module->l('replied', 'viewticket'),
+                            ));
+
                             $this->setTemplate('module:wkuvdeskticketsystem/views/templates/front/viewticket.tpl');
                         } else {
                             Tools::redirect($this->context->link->getPageLink('pagenotfound'));
@@ -77,7 +84,11 @@ class WkUvDeskTicketSystemViewTicketModuleFrontController extends ModuleFrontCon
                 Tools::redirect($this->context->link->getPageLink('pagenotfound'));
             }
         } else {
-            Tools::redirect('index.php?controller=authentication&back='.urlencode($this->context->link->getModuleLink('wkuvdeskticketsystem', 'customerticketlist')));
+            Tools::redirect(
+                'index.php?controller=authentication&back='.urlencode(
+                    $this->context->link->getModuleLink('wkuvdeskticketsystem', 'customerticketlist')
+                )
+            );
         }
     }
 
@@ -103,7 +114,13 @@ class WkUvDeskTicketSystemViewTicketModuleFrontController extends ModuleFrontCon
                         $tickets = $objUvdesk->addThread($ticketId, $reply, $actAsType);
                         if ($tickets && isset($tickets->id) && $tickets->id) {
                             $success = 1;
-                            Tools::redirect($this->context->link->getModuleLink('wkuvdeskticketsystem', 'viewticket', array('id' => $incrementId, 'success' => $success)));
+                            Tools::redirect(
+                                $this->context->link->getModuleLink(
+                                    'wkuvdeskticketsystem',
+                                    'viewticket',
+                                    array('id' => $incrementId, 'success' => $success)
+                                )
+                            );
                         }
                     }
                 }
@@ -113,7 +130,7 @@ class WkUvDeskTicketSystemViewTicketModuleFrontController extends ModuleFrontCon
                 }
             }
         }
-        
+
         //Add collaborator of ticket
         if (Tools::isSubmit('submitCollaborator')) {
             $incrementId = Tools::getValue('id'); //Increment Id is a ticket id for a particular company
@@ -134,7 +151,13 @@ class WkUvDeskTicketSystemViewTicketModuleFrontController extends ModuleFrontCon
                         $addedSuccess = $objUvdesk->addCollaborator($ticketId, $collaboratorEmail);
                         $success = 1;
                         if ($addedSuccess && isset($addedSuccess->collaborator->id)) {
-                            Tools::redirect($this->context->link->getModuleLink('wkuvdeskticketsystem', 'viewticket', array('id' => $incrementId, 'success_col' => $success)));
+                            Tools::redirect(
+                                $this->context->link->getModuleLink(
+                                    'wkuvdeskticketsystem',
+                                    'viewticket',
+                                    array('id' => $incrementId, 'success_col' => $success)
+                                )
+                            );
                         } else {
                             if (isset($addedSuccess->error)) {
                                 if (isset($addedSuccess->description)) {
@@ -215,9 +238,19 @@ class WkUvDeskTicketSystemViewTicketModuleFrontController extends ModuleFrontCon
     {
         parent::setMedia();
         //tinymce
-        $this->registerJavascript('tinymce_lib', "https://cloud.tinymce.com/stable/tinymce.min.js?apiKey=".Configuration::get('WK_UVDESK_TINYMCE_KEY'), array('server' => 'remote'));
+        $this->registerJavascript(
+            'tinymce_lib',
+            "https://cloud.tinymce.com/stable/tinymce.min.js?apiKey=".Configuration::get('WK_UVDESK_TINYMCE_KEY'),
+            array('server' => 'remote')
+        );
 
-        $this->registerStylesheet('uvdeskticketlist-css', 'modules/'.$this->module->name.'/views/css/uvdeskticketlist.css');
-        $this->registerJavascript('uvdeskticketlist-js', 'modules/'.$this->module->name.'/views/js/uvdeskticketlist.js');
+        $this->registerStylesheet(
+            'uvdeskticketlist-css',
+            'modules/'.$this->module->name.'/views/css/uvdeskticketlist.css'
+        );
+        $this->registerJavascript(
+            'uvdeskticketlist-js',
+            'modules/'.$this->module->name.'/views/js/uvdeskticketlist.js'
+        );
     }
 }

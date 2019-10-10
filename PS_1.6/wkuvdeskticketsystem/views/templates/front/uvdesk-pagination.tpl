@@ -1,5 +1,5 @@
 {*
-* 2010-2017 Webkul.
+* 2010-2019 Webkul.
 *
 * NOTICE OF LICENSE
 *
@@ -13,7 +13,7 @@
 * needs please refer to https://store.webkul.com/customisation-guidelines/ for more information.
 *
 *  @author    Webkul IN <support@webkul.com>
-*  @copyright 2010-2017 Webkul IN
+*  @copyright 2010-2019 Webkul IN
 *  @license   https://store.webkul.com/license.html
 *}
 
@@ -40,7 +40,7 @@
 		{assign var='requestNb' value=$link->getPaginationLink(false, false, true, false, false, true)}
 	{/if}
 	<!-- Pagination -->
-	<div id="pagination{if isset($paginationId)}_{$paginationId|escape:'html':'UTF-8'}{/if}" class="pagination clearfix">	    
+	<div id="pagination{if isset($paginationId)}_{$paginationId|escape:'html':'UTF-8'}{/if}" class="pagination clearfix">
 		{if $start!=$stop}
 			<ul class="pagination">
 				{if $p != 1}

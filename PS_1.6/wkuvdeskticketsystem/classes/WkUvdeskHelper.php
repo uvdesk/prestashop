@@ -1,6 +1,6 @@
 <?php
 /**
-* 2010-2017 Webkul.
+* 2010-2019 Webkul.
 *
 * NOTICE OF LICENSE
 *
@@ -14,7 +14,7 @@
 * needs please refer to https://store.webkul.com/customisation-guidelines/ for more information.
 *
 *  @author    Webkul IN <support@webkul.com>
-*  @copyright 2010-2017 Webkul IN
+*  @copyright 2010-2019 Webkul IN
 *  @license   https://store.webkul.com/license.html
 */
 
@@ -111,13 +111,15 @@ class WkUvdeskHelper extends ObjectModel
     public function createTicket($data)
     {
         $url = 'tickets.json';
-        
+
         $type = $data['type'];
         $name = $data['name'];
         $from = $data['from'];
         $subject = $data['subject'];
         $reply = $data['reply'];
         $customFields = $data['customFields'];
+        $actAsType = $data['actAsType'];
+        $actAsEmail = $data['actAsEmail'];
 
         $lineEnd = "\r\n";
         $mimeBoundary = md5(time());
@@ -137,16 +139,22 @@ class WkUvdeskHelper extends ObjectModel
         $data .= 'Content-Disposition: form-data; name="subject"' . $lineEnd . $lineEnd;
         $data .= $subject . $lineEnd;
         $data .= '--' . $mimeBoundary . $lineEnd;
+        $data .= 'Content-Disposition: form-data; name="actAsType"' . $lineEnd . $lineEnd;
+        $data .= $actAsType . $lineEnd;
+        $data .= '--' . $mimeBoundary . $lineEnd;
+        $data .= 'Content-Disposition: form-data; name="actAsEmail"' . $lineEnd . $lineEnd;
+        $data .= $actAsEmail . $lineEnd;
+        $data .= '--' . $mimeBoundary . $lineEnd;
 
         //Add attachment
-        $attachmentFile = $_FILES['attachment'];
-        if (isset($attachmentFile) && $attachmentFile) {
+        if (isset($_FILES['attachment']) && $_FILES['attachment']) {
+            $attachmentFile = $_FILES['attachment'];
             foreach ($attachmentFile['name'] as $key => $file) {
                 $fileType = $attachmentFile['type'][$key];
                 $fileName = $attachmentFile['name'][$key];
                 $fileTmpName = $attachmentFile['tmp_name'][$key];
                 if ($fileTmpName) {
-                    $data .= 'Content-Disposition: form-data; name="attachments[]"; filename="' . $fileName . '"' . $lineEnd;
+                    $data .= 'Content-Disposition: form-data; name="attachments[]"; filename="'.$fileName.'"'.$lineEnd;
                     $data .= "Content-Type: $fileType" . $lineEnd . $lineEnd;
                     $data .= Tools::file_get_contents($fileTmpName) . $lineEnd;
                     $data .= '--' . $mimeBoundary . $lineEnd;
@@ -161,12 +169,12 @@ class WkUvdeskHelper extends ObjectModel
                     if (is_array($customFieldValue)) {
                         foreach ($customFieldValue as $customEachValue) {
                             $data .= '--' . $mimeBoundary . $lineEnd;
-                            $data .= 'Content-Disposition: form-data; name="customFields['.$customFieldId.'][]"' . $lineEnd . $lineEnd;
+                            $data .= 'Content-Disposition: form-data; name="customFields['.$customFieldId.'][]"'.$lineEnd.$lineEnd;
                             $data .= $customEachValue . $lineEnd;
                         }
                     } else {
                         $data .= '--' . $mimeBoundary . $lineEnd;
-                        $data .= 'Content-Disposition: form-data; name="customFields['.$customFieldId.']"' . $lineEnd . $lineEnd;
+                        $data .= 'Content-Disposition: form-data; name="customFields['.$customFieldId.']"'.$lineEnd.$lineEnd;
                         $data .= $customFieldValue . $lineEnd;
                     }
                 }
@@ -191,7 +199,7 @@ class WkUvdeskHelper extends ObjectModel
 
         $data .= "--" . $mimeBoundary . "--" . $lineEnd . $lineEnd;
         $ticket = $this->postApi($url, $data, 'POST', $mimeBoundary);
-        
+
         return $ticket;
     }
 
@@ -364,7 +372,7 @@ class WkUvdeskHelper extends ObjectModel
         $data .= "reply" . $lineEnd;
         $data .= '--' . $mimeBoundary . $lineEnd;
         // attachements
-        
+
         // act as type (type of user making reply to differentiate whether the user is customer or agent)
         $data .= 'Content-Disposition: form-data; name="actAsType"' . $lineEnd . $lineEnd;
         $data .= "".$actAsType."" . $lineEnd;
@@ -372,20 +380,20 @@ class WkUvdeskHelper extends ObjectModel
 
         if ($actAsType == 'customer') {
             $customerEmail = Context::getContext()->customer->email;
-            // act as email (email of user making reply to differentiate whether the reply is made by the customer or collaborator)
+            // act as email (differentiate whether the reply is made by customer or collaborator)
             $data .= 'Content-Disposition: form-data; name="actAsEmail"' . $lineEnd . $lineEnd;
             $data .= "".$customerEmail."" . $lineEnd;
             $data .= '--' . $mimeBoundary . $lineEnd;
         }
 
-        $attachmentFile = $_FILES['attachment'];
-        if (isset($attachmentFile) && $attachmentFile) {
+        if (isset($_FILES['attachment']) && $_FILES['attachment']) {
+            $attachmentFile = $_FILES['attachment'];
             foreach ($attachmentFile['name'] as $key => $file) {
                 $fileType = $attachmentFile['type'][$key];
                 $fileName = $attachmentFile['name'][$key];
                 $fileTmpName = $attachmentFile['tmp_name'][$key];
                 if ($fileTmpName) {
-                    $data .= 'Content-Disposition: form-data; name="attachments[]"; filename="' . $fileName . '"' . $lineEnd;
+                    $data .= 'Content-Disposition: form-data; name="attachments[]"; filename="'.$fileName.'"'.$lineEnd;
                     $data .= "Content-Type: $fileType" . $lineEnd . $lineEnd;
                     $data .= Tools::file_get_contents($fileTmpName) . $lineEnd;
                     $data .= '--' . $mimeBoundary . $lineEnd;
@@ -407,7 +415,7 @@ class WkUvdeskHelper extends ObjectModel
     public function getFilteredData($data)
     {
         $url = 'filters.json?'.$data.'=1';
-        
+
         $response = $this->callApi($url);
         return $response;
     }
@@ -442,7 +450,7 @@ class WkUvdeskHelper extends ObjectModel
         if ($attachmentId) {
             $companyDomain = $this->uvdesk_company_domain;
             $accessToken = $this->uvdesk_access_token;
-            $downloadURL = 'https://' . $companyDomain . '.uvdesk.com/en/api/ticket/attachment/' . $attachmentId . '.json?access_token=' . $accessToken;
+            $downloadURL = 'https://'.$companyDomain.'.uvdesk.com/en/api/ticket/attachment/'.$attachmentId.'.json?access_token='.$accessToken;
 
             return $downloadURL;
         }
@@ -482,7 +490,7 @@ class WkUvdeskHelper extends ObjectModel
         $headers = array(
             'Authorization: Bearer ' . $accessToken,
         );
-        
+
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
         curl_setopt($ch, CURLOPT_HEADER, true);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -599,7 +607,7 @@ class WkUvdeskHelper extends ObjectModel
         if ((int)Tools::getValue('n') && (int)$total_products > 0) {
             $n_array[] = $total_products;
         }
-        // Retrieve the current number of products per page (either the default, the GET parameter or the one in the cookie)
+
         $this->n = $default_products_per_page;
         if (isset($this->context->cookie->nb_item_per_page) && in_array($this->context->cookie->nb_item_per_page, $n_array)) {
             $this->n = (int)$this->context->cookie->nb_item_per_page;
@@ -611,7 +619,6 @@ class WkUvdeskHelper extends ObjectModel
 
         // Retrieve the page number (either the GET parameter or the first page)
         $this->p = (int)Tools::getValue('p', 1);
-        // If the parameter is not correct then redirect (do not merge with the previous line, the redirect is required in order to avoid duplicate content)
         if (!is_numeric($this->p) || $this->p < 1) {
             Tools::redirect($this->context->link->getPaginationLink(false, false, $this->n, false, 1, false));
         }

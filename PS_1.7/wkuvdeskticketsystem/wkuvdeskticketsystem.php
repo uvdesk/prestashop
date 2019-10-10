@@ -1,6 +1,6 @@
 <?php
 /**
-* 2010-2017 Webkul.
+* 2010-2019 Webkul.
 *
 * NOTICE OF LICENSE
 *
@@ -14,7 +14,7 @@
 * needs please refer to https://store.webkul.com/customisation-guidelines/ for more information.
 *
 *  @author    Webkul IN <support@webkul.com>
-*  @copyright 2010-2017 Webkul IN
+*  @copyright 2010-2019 Webkul IN
 *  @license   https://store.webkul.com/license.html
 */
 
@@ -24,8 +24,6 @@ if (!defined('_PS_VERSION_')) {
 require_once dirname(__FILE__).'/classes/WkUvdeskHelper.php';
 class WkUvDeskTicketSystem extends Module
 {
-    private $_html = '';
-    private $_postErrors = array();
     public function __construct()
     {
         $this->name = 'wkuvdeskticketsystem';
@@ -33,14 +31,14 @@ class WkUvDeskTicketSystem extends Module
         $this->author = 'Webkul';
         $this->need_instance = 0;
         $this->bootstrap = true;
-        $this->version = '4.0.1';
+        $this->version = '4.0.2';
         $this->ps_versions_compliancy = array('min' => '1.7', 'max' => _PS_VERSION_);
         $this->confirmUnistall = $this->l('Are you sure you want to uninstall this module?');
         parent::__construct();
         $this->displayName = $this->l('UVdesk – Prestashop Free Helpdesk Ticket System');
         $this->description = $this->l('Customer can create tickets for his/her query.');
     }
-    
+
     public function getContent()
     {
         Tools::redirectAdmin($this->context->link->getAdminLink('AdminUvdeskConfiguration'));
@@ -59,7 +57,10 @@ class WkUvDeskTicketSystem extends Module
     {
         if (Configuration::get('WK_UVDESK_ACCESS_TOKEN')
             && Configuration::get('WK_UVDESK_COMPANY_DOMAIN')) {
-            $this->context->smarty->assign('ticketLink', $this->context->link->getModuleLink('wkuvdeskticketsystem', 'createticket'));
+            $this->context->smarty->assign(
+                'ticketLink',
+                $this->context->link->getModuleLink('wkuvdeskticketsystem', 'createticket')
+            );
 
             return $this->display(__FILE__, 'ticket_nav.tpl');
         }
@@ -115,7 +116,7 @@ class WkUvDeskTicketSystem extends Module
         $tab->module = $this->name;
         return $tab->add();
     }
-    
+
     public function deleteConfigKeys()
     {
         $moduleConfigData = array('WK_UVDESK_ACCESS_TOKEN', 'WK_UVDESK_COMPANY_DOMAIN', 'WK_UVDESK_TINYMCE_KEY');
@@ -124,10 +125,10 @@ class WkUvDeskTicketSystem extends Module
                 return false;
             }
         }
-        
+
         return true;
     }
-    
+
     public function uninstallTab()
     {
         $moduleTabs = Tab::getCollectionFromModule($this->name);

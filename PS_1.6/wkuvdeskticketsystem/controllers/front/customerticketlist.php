@@ -1,6 +1,6 @@
 <?php
 /**
-* 2010-2017 Webkul.
+* 2010-2019 Webkul.
 *
 * NOTICE OF LICENSE
 *
@@ -14,7 +14,7 @@
 * needs please refer to https://store.webkul.com/customisation-guidelines/ for more information.
 *
 *  @author    Webkul IN <support@webkul.com>
-*  @copyright 2010-2017 Webkul IN
+*  @copyright 2010-2019 Webkul IN
 *  @license   https://store.webkul.com/license.html
 */
 
@@ -70,7 +70,10 @@ class WkUvDeskTicketSystemCustomerTicketListModuleFrontController extends Module
                         $customerTickets = (array) $ticketList->tickets;
                         if ($ticketList->pagination->totalCount) {
                             // total no. of tickets by status
-                            $objUvdesk->pagination($ticketList->pagination->totalCount, $ticketList->pagination->numItemsPerPage);
+                            $objUvdesk->pagination(
+                                $ticketList->pagination->totalCount,
+                                $ticketList->pagination->numItemsPerPage
+                            );
                         }
 
                         $this->context->smarty->assign(array(
@@ -86,7 +89,11 @@ class WkUvDeskTicketSystemCustomerTicketListModuleFrontController extends Module
             }
             $this->setTemplate('customerticketlist.tpl');
         } else {
-            Tools::redirect('index.php?controller=authentication&back='.urlencode($this->context->link->getModuleLink('wkuvdeskticketsystem', 'customerticketlist')));
+            Tools::redirect(
+                'index.php?controller=authentication&back='.urlencode(
+                    $this->context->link->getModuleLink('wkuvdeskticketsystem', 'customerticketlist')
+                )
+            );
         }
     }
 

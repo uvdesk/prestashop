@@ -1,5 +1,5 @@
 {*
-* 2010-2017 Webkul.
+* 2010-2019 Webkul.
 *
 * NOTICE OF LICENSE
 *
@@ -13,7 +13,7 @@
 * needs please refer to https://store.webkul.com/customisation-guidelines/ for more information.
 *
 *  @author    Webkul IN <support@webkul.com>
-*  @copyright 2010-2017 Webkul IN
+*  @copyright 2010-2019 Webkul IN
 *  @license   https://store.webkul.com/license.html
 *}
 
@@ -84,7 +84,7 @@
 					                {if isset($attachments) && $attachments}
 					                	<div class="attachments first-attach">
 						                	{foreach $attachments as $attachment}
-						                    	<a href="{$link->getAdminLink('AdminUvdeskTicketList')}&attach={$attachment->id|escape:'htmlall':'UTF-8'}">
+						                    	<a href="{$link->getAdminLink('AdminUvdeskTicketList')|escape:'htmlall':'UTF-8'}&attach={$attachment->id|escape:'htmlall':'UTF-8'}">
 						                    		<i class="icon-download wk-attachment" data-attachment-id="{$attachment->id|escape:'htmlall':'UTF-8'}" title="{$attachment->name|escape:'htmlall':'UTF-8'}"></i>
 								                </a>
 						                    {/foreach}
@@ -262,10 +262,10 @@
 												<td>#{$tickets->incrementId|escape:'htmlall':'UTF-8'}</td>
 												<td>{$tickets->customer->name|escape:'htmlall':'UTF-8'}</td>
 												<td>{$tickets->subject|truncate:30:'..':true:true|escape:'htmlall':'UTF-8'}</td>
-												<td>{$tickets->formatedCreatedAt|escape:'htmlall':'UTF-8'}</td>					
+												<td>{$tickets->formatedCreatedAt|escape:'htmlall':'UTF-8'}</td>
 												<td><center>{$tickets->totalThreads|escape:'htmlall':'UTF-8'}</center></td>
 												<td>
-													<div class="getAllAgent"> 
+													<div class="getAllAgent">
 														{if isset($tickets->agent->name)}
 															{assign var=agent_name value=" "|explode:$tickets->agent->name}
 															<span class="badge badge-sm badge-primary"><i class="icon-pencil"></i></span> {$agent_name[0]|escape:'htmlall':'UTF-8'}

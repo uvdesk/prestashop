@@ -1,6 +1,6 @@
 <?php
 /**
-* 2010-2017 Webkul.
+* 2010-2019 Webkul.
 *
 * NOTICE OF LICENSE
 *
@@ -14,7 +14,7 @@
 * needs please refer to https://store.webkul.com/customisation-guidelines/ for more information.
 *
 *  @author    Webkul IN <support@webkul.com>
-*  @copyright 2010-2017 Webkul IN
+*  @copyright 2010-2019 Webkul IN
 *  @license   https://store.webkul.com/license.html
 */
 
@@ -67,7 +67,9 @@ class AdminUvdeskTicketListController extends ModuleAdminController
 
                 //Get custom fields of this ticket
                 if (isset($ticketDetail->ticket->customFieldValues)) {
-                    $customFieldValues = WkUvdeskHelper::storeTicketCustomFieldValues($ticketDetail->ticket->customFieldValues);
+                    $customFieldValues = WkUvdeskHelper::storeTicketCustomFieldValues(
+                        $ticketDetail->ticket->customFieldValues
+                    );
 
                     if ($customFieldValues) {
                         $this->context->smarty->assign('customFieldValues', $customFieldValues);
@@ -156,13 +158,16 @@ class AdminUvdeskTicketListController extends ModuleAdminController
                 'priority' => $priority,
                 'type' => $type
             );
-            
+
             $ticketList = $objUvdesk->getTickets($filterData);
             if (isset($ticketList->tickets)) {
                 $customerTickets = (array) $ticketList->tickets;
                 if ($ticketList->pagination->totalCount) {
                     // total no. of tickets by status
-                    $objUvdesk->pagination($ticketList->pagination->totalCount, $ticketList->pagination->numItemsPerPage);
+                    $objUvdesk->pagination(
+                        $ticketList->pagination->totalCount,
+                        $ticketList->pagination->numItemsPerPage
+                    );
                 }
 
                 //get all agent members
@@ -256,7 +261,9 @@ class AdminUvdeskTicketListController extends ModuleAdminController
                         $tickets = $objUvdesk->addThread($ticketId, $reply, $actAsType);
                         if ($tickets && isset($tickets->id) && $tickets->id) {
                             $success = 1;
-                            Tools::redirectAdmin(self::$currentIndex.'&id='.(int) $incrementId.'&success='.(int) $success.'&token='.$this->token);
+                            Tools::redirectAdmin(
+                                self::$currentIndex.'&id='.(int) $incrementId.'&success='.(int) $success.'&token='.$this->token
+                            );
                         }
                     }
                 }
@@ -287,7 +294,9 @@ class AdminUvdeskTicketListController extends ModuleAdminController
                         $addedSuccess = $objUvdesk->addCollaborator($ticketId, $collaboratorEmail);
                         $success = 1;
                         if ($addedSuccess && isset($addedSuccess->collaborator->id)) {
-                            Tools::redirectAdmin(self::$currentIndex.'&id='.(int) $incrementId.'&conf=3&token='.$this->token);
+                            Tools::redirectAdmin(
+                                self::$currentIndex.'&id='.(int) $incrementId.'&conf=3&token='.$this->token
+                            );
                         } else {
                             if (isset($addedSuccess->error)) {
                                 if (isset($addedSuccess->description)) {
@@ -404,9 +413,9 @@ class AdminUvdeskTicketListController extends ModuleAdminController
             if (isset($ticketThreads->threads) && $ticketThreads->threads) {
                 $ascendingThreads = array_reverse($ticketThreads->threads);
                 die(Tools::jsonEncode(array(
-                        'threads' => (array) $ascendingThreads,
-                        'threadsPagination' => $ticketThreads->pagination,
-                    )));
+                    'threads' => (array) $ascendingThreads,
+                    'threadsPagination' => $ticketThreads->pagination,
+                )));
             }
         }
         die('0');
@@ -432,7 +441,9 @@ class AdminUvdeskTicketListController extends ModuleAdminController
         parent::setMedia();
 
         //tinymce
-        $this->addJS("https://cloud.tinymce.com/stable/tinymce.min.js?apiKey=".Configuration::get('WK_UVDESK_TINYMCE_KEY'));
+        $this->addJS(
+            "https://cloud.tinymce.com/stable/tinymce.min.js?apiKey=".Configuration::get('WK_UVDESK_TINYMCE_KEY')
+        );
 
         $this->addCSS(_MODULE_DIR_.$this->module->name.'/views/css/uvdeskticketlist.css');
         $this->addJS(_MODULE_DIR_.$this->module->name.'/views/js/uvdeskticketlist.js');

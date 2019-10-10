@@ -1,5 +1,5 @@
 {*
-* 2010-2017 Webkul.
+* 2010-2019 Webkul.
 *
 * NOTICE OF LICENSE
 *
@@ -13,7 +13,7 @@
 * needs please refer to https://store.webkul.com/customisation-guidelines/ for more information.
 *
 *  @author    Webkul IN <support@webkul.com>
-*  @copyright 2010-2017 Webkul IN
+*  @copyright 2010-2019 Webkul IN
 *  @license   https://store.webkul.com/license.html
 *}
 
@@ -72,8 +72,8 @@
 							{*Display custom field according to plan*}
 							{if isset($customerActiveFields)}
 								{foreach $customerActiveFields as $fields}
-									<div class="form-group 
-										{if $fields->customFieldsDependency}wk-dependent 
+									<div class="form-group
+										{if $fields->customFieldsDependency}wk-dependent
 											{foreach $fields->customFieldsDependency as $dependentTypes}
 												wk-dependent{$dependentTypes->id|escape:'htmlall':'UTF-8'}
 											{/foreach}
@@ -117,11 +117,11 @@
 													<div class="wk-form-{$fields->fieldType|escape:'htmlall':'UTF-8'}" style="padding:5px 0;">
 														<label class="pull-left">
 															{if $fields->fieldType == 'checkbox'}
-																<input type="{$fields->fieldType}"
+																<input type="{$fields->fieldType|escape:'htmlall':'UTF-8'}"
 																name="customFields[{$fields->id|escape:'htmlall':'UTF-8'}][]"
 																id="customFields_{$fields->id|escape:'htmlall':'UTF-8'}_{$optionValues->id|escape:'htmlall':'UTF-8'}"
 																class="form-control"
-																value="{$optionValues->id}"
+																value="{$optionValues->id|escape:'htmlall':'UTF-8'}"
 																{if empty($fields->customFieldsDependency) && 																				$fields->required == '1'}required{/if} >
 															{else}
 																<input type="{$fields->fieldType|escape:'htmlall':'UTF-8'}"

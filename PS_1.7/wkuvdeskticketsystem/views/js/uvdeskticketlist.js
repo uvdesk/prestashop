@@ -1,5 +1,5 @@
 /**
- * 2010-2017 Webkul.
+ * 2010-2019 Webkul.
  *
  * NOTICE OF LICENSE
  *
@@ -13,7 +13,7 @@
  * needs please refer to https://store.webkul.com/customisation-guidelines/ for more information.
  *
  *  @author    Webkul IN <support@webkul.com>
- *  @copyright 2010-2017 Webkul IN
+ *  @copyright 2010-2019 Webkul IN
  *  @license   https://store.webkul.com/license.html
  */
 
@@ -42,7 +42,7 @@ $(document).ready(function() {
             timeFormat: 'hh:mm:ss'
         });
     }
-    
+
     // on change of all checkbox
     $(document).on('change', '#wk_uvdeskticket_list_all', function() {
         $('input[name="wk_uvdeskticket_list[]"]').prop('checked', $(this).prop("checked"));
@@ -605,7 +605,7 @@ function getAllFilteredList(filterHTML, allFilterDetails, filterValue) {
         if (activeType != '') {
             extraParams += '&type=' + activeType;
         }
-        
+
         $.each(allFilterDetails, function(index, filterDetail) {
             filterHTML += '<li><a href="' + uvdesk_ticket_controller + extraParams + '&' + filterValue + '=' + filterDetail.id + '">';
             if (filterDetail.smallThumbnail) {

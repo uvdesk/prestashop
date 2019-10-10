@@ -1,5 +1,5 @@
 {*
-* 2010-2017 Webkul.
+* 2010-2019 Webkul.
 *
 * NOTICE OF LICENSE
 *
@@ -13,7 +13,7 @@
 * needs please refer to https://store.webkul.com/customisation-guidelines/ for more information.
 *
 *  @author    Webkul IN <support@webkul.com>
-*  @copyright 2010-2017 Webkul IN
+*  @copyright 2010-2019 Webkul IN
 *  @license   https://store.webkul.com/license.html
 *}
 
@@ -91,7 +91,7 @@
 													</td>
 													<td>#{$tickets->incrementId|escape:'htmlall':'UTF-8'}</td>
 													<td>{$tickets->subject|truncate:30:'..':true:true|escape:'htmlall':'UTF-8'}</td>
-													<td>{$tickets->formatedCreatedAt|escape:'htmlall':'UTF-8'}</td>					
+													<td>{$tickets->formatedCreatedAt|escape:'htmlall':'UTF-8'}</td>
 													<td><center>{$tickets->totalThreads|escape:'htmlall':'UTF-8'}</center></td>
 													<td>{if isset($tickets->agent->name)}<i class="icon-user"></i> {$tickets->agent->name|escape:'htmlall':'UTF-8'}{else}-{/if}</td>
 													<td>

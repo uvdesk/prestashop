@@ -1,5 +1,5 @@
 {*
-* 2010-2017 Webkul.
+* 2010-2019 Webkul.
 *
 * NOTICE OF LICENSE
 *
@@ -13,7 +13,7 @@
 * needs please refer to https://store.webkul.com/customisation-guidelines/ for more information.
 *
 *  @author    Webkul IN <support@webkul.com>
-*  @copyright 2010-2017 Webkul IN
+*  @copyright 2010-2019 Webkul IN
 *  @license   https://store.webkul.com/license.html
 *}
 
@@ -42,7 +42,7 @@
                 {l s='There is no collaborator available for this ticket.' mod='wkuvdeskticketsystem'}
             {/if}
         </div>
-        <form name="collaborator_form" action="{if isset($backendController)}{$link->getAdminLink('AdminUvdeskTicketList')}&id={$incrementId}{else}{$link->getModuleLink('wkuvdeskticketsystem', 'viewticket', ['id' => $incrementId])|escape:'htmlall':'UTF-8'}{/if}" method="post" enctype="multipart/form-data">
+        <form name="collaborator_form" action="{if isset($backendController)}{$link->getAdminLink('AdminUvdeskTicketList')|escape:'htmlall':'UTF-8'}&id={$incrementId|escape:'htmlall':'UTF-8'}{else}{$link->getModuleLink('wkuvdeskticketsystem', 'viewticket', ['id' => $incrementId])|escape:'htmlall':'UTF-8'}{/if}" method="post" enctype="multipart/form-data">
             <input type="hidden" name="ticketId" value="{$ticketId|escape:'htmlall':'UTF-8'}">
             <div class="form-group">
                 <input type="email"

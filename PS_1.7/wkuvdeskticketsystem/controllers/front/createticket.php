@@ -1,6 +1,6 @@
 <?php
 /**
-* 2010-2017 Webkul.
+* 2010-2019 Webkul.
 *
 * NOTICE OF LICENSE
 *
@@ -14,7 +14,7 @@
 * needs please refer to https://store.webkul.com/customisation-guidelines/ for more information.
 *
 *  @author    Webkul IN <support@webkul.com>
-*  @copyright 2010-2017 Webkul IN
+*  @copyright 2010-2019 Webkul IN
 *  @license   https://store.webkul.com/license.html
 */
 
@@ -36,7 +36,8 @@ class WkUvDeskTicketSystemCreateTicketModuleFrontController extends ModuleFrontC
                     $nonDependentFields = array();
                     $customerActiveFields = array();
                     foreach ($customerAllFields as &$fields) {
-                        if ($fields->status == 1 && ($fields->agentType == 'customer' || $fields->agentType == 'both')) {
+                        if ($fields->status == 1
+                        && ($fields->agentType == 'customer' || $fields->agentType == 'both')) {
                             $customerActiveFields[] = $fields;
 
                             //Get all non dependent custom fields
@@ -51,7 +52,7 @@ class WkUvDeskTicketSystemCreateTicketModuleFrontController extends ModuleFrontC
                             'nonDependentFields' => Tools::jsonEncode($nonDependentFields),
                         ));
                     }
-                    
+
                     $this->context->smarty->assign('customerActiveFields', $customerActiveFields);
                 }
 
@@ -64,7 +65,11 @@ class WkUvDeskTicketSystemCreateTicketModuleFrontController extends ModuleFrontC
 
             $this->setTemplate('module:wkuvdeskticketsystem/views/templates/front/createticket.tpl');
         } else {
-            Tools::redirect('index.php?controller=authentication&back='.urlencode($this->context->link->getModuleLink('wkuvdeskticketsystem', 'createticket')));
+            Tools::redirect(
+                'index.php?controller=authentication&back='.urlencode(
+                    $this->context->link->getModuleLink('wkuvdeskticketsystem', 'createticket')
+                )
+            );
         }
     }
 
@@ -87,7 +92,7 @@ class WkUvDeskTicketSystemCreateTicketModuleFrontController extends ModuleFrontC
             if (!$reply) {
                 $this->errors[] = $this->module->l('Message is required field.', 'createticket');
             }
-            
+
             //Custom Field validation
             $fieldRequired = false;
             $customFields = Tools::getValue('customFields');
@@ -101,7 +106,8 @@ class WkUvDeskTicketSystemCreateTicketModuleFrontController extends ModuleFrontC
                         }
                     } else {
                         //If custom file field is required
-                        if (isset($_FILES['customFields']['tmp_name'][$reqFieldId]) && $_FILES['customFields']['tmp_name'][$reqFieldId] == '') {
+                        if (isset($_FILES['customFields']['tmp_name'][$reqFieldId])
+                        && $_FILES['customFields']['tmp_name'][$reqFieldId] == '') {
                             $fieldRequired = true;
                         }
                     }
@@ -120,12 +126,20 @@ class WkUvDeskTicketSystemCreateTicketModuleFrontController extends ModuleFrontC
                     'reply'   => $reply,
                     'type'    => $ticketType,
                     'customFields' => $customFields,
+                    'actAsType' => 'customer',
+                    'actAsEmail' => $customerEmail,
                 );
 
                 $objUvdesk = new WkUvdeskHelper();
                 $tickets = $objUvdesk->createTicket($data);
                 if ($tickets && isset($tickets->ticketId) && $tickets->ticketId) {
-                    Tools::redirect($this->context->link->getModuleLink('wkuvdeskticketsystem', 'customerticketlist', array('created' => 1)));
+                    Tools::redirect(
+                        $this->context->link->getModuleLink(
+                            'wkuvdeskticketsystem',
+                            'customerticketlist',
+                            array('created' => 1)
+                        )
+                    );
                 } elseif (isset($tickets->error)) {
                     if (isset($tickets->error_description)) {
                         $this->errors[] = $tickets->error_description;
@@ -160,9 +174,19 @@ class WkUvDeskTicketSystemCreateTicketModuleFrontController extends ModuleFrontC
         parent::setMedia();
         $this->addJqueryUI('ui.datepicker');
         $this->addJqueryUI(array('ui.slider', 'ui.datepicker'));
-        $this->context->controller->registerJavascript('wk_timepicker-js', 'js/jquery/plugins/timepicker/jquery-ui-timepicker-addon.js', array('position' => 'bottom', 'priority' => 1000));
+        $this->context->controller->registerJavascript(
+            'wk_timepicker-js',
+            'js/jquery/plugins/timepicker/jquery-ui-timepicker-addon.js',
+            array('position' => 'bottom', 'priority' => 1000)
+        );
 
-        $this->registerStylesheet('uvdeskticketlist-css', 'modules/'.$this->module->name.'/views/css/uvdeskticketlist.css');
-        $this->registerJavascript('uvdeskticketlist-js', 'modules/'.$this->module->name.'/views/js/uvdeskticketlist.js');
+        $this->registerStylesheet(
+            'uvdeskticketlist-css',
+            'modules/'.$this->module->name.'/views/css/uvdeskticketlist.css'
+        );
+        $this->registerJavascript(
+            'uvdeskticketlist-js',
+            'modules/'.$this->module->name.'/views/js/uvdeskticketlist.js'
+        );
     }
 }
