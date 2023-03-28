@@ -1,4 +1,20 @@
 ##########################################################################
+Change Log : V4.0.2 To V4.0.3 | COMPATIBLE:: PRESTASHOP V1.7 & V8.x.x
+##########################################################################
+
+## Update Policy :
+	- Module need only file update, can be updated only by UPLOADING new version on module
+
+## Improvements:
+	- Make compatible with PS V8.x.x
+
+## Bug Fixed:
+	- Date time icon design issue on create ticket page
+	- Check error validation on file upload on ticket create or reply
+	- Fixed issue when ticket assign to other agent from BO list
+
+
+##########################################################################
 Change Log : V4.0.1 To V4.0.2 | COMPATIBLE:: PRESTASHOP V1.7
 ##########################################################################
 

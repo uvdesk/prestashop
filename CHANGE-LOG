@@ -1,5 +1,3 @@
-Prestashop Uvdesk Ticket System
-
 ##########################################################################
 Change Log : V1.0.0 | COMPATIBLE:: PRESTASHOP V1.6
 ##########################################################################
@@ -26,3 +24,28 @@ Change Log : V1.0.0 To V4.0.0 | COMPATIBLE:: PRESTASHOP V1.7
 
 ## Compatibiltiy
 	- Module compatible with Prestashop V1.7
+
+##########################################################################
+Change Log : V4.0.0 To V4.0.1 | COMPATIBLE:: PRESTASHOP V1.7
+##########################################################################
+
+## Improvements
+	- Customer can see 'create ticket' button on top nav at front end
+	- Customer can add attachment when create ticket
+	- Customer can fill custom fields on create ticket page created through Uvdesk account on the basis of Plan
+	- Admin can also add collaborator on view ticket page
+
+##########################################################################
+Change Log : V4.0.1 To V4.0.2 | COMPATIBLE:: PRESTASHOP V1.7
+##########################################################################
+
+## Improvements
+	- Module translation is available in following languages: French (fr), Arabic(ar), Spanish(es), German(de), Italian(It), Russian(ru), Japanese(ja), Dutch(nl), Bulgarian (bg), Portuguese (pt).
+
+##########################################################################
+Change Log : V4.0.2 To V4.0.3 | COMPATIBLE:: PRESTASHOP V1.7 & V8.x.x
+##########################################################################
+
+## Compatibiltiy
+	- Module compatible with Prestashop V8.0.0
+

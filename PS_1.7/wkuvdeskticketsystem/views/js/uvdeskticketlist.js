@@ -1,21 +1,21 @@
 /**
- * 2010-2019 Webkul.
- *
- * NOTICE OF LICENSE
- *
- * All right is reserved,
- * Please go through this link for complete license : https://store.webkul.com/license.html
- *
- * DISCLAIMER
- *
- * Do not edit or add to this file if you wish to upgrade this module to newer
- * versions in the future. If you wish to customize this module for your
- * needs please refer to https://store.webkul.com/customisation-guidelines/ for more information.
- *
- *  @author    Webkul IN <support@webkul.com>
- *  @copyright 2010-2019 Webkul IN
- *  @license   https://store.webkul.com/license.html
- */
+* NOTICE OF LICENSE
+*
+* This source file is subject to the Academic Free License version 3.0
+* that is bundled with this package in the file LICENSE.txt
+* It is also available through the world-wide-web at this URL:
+* https://opensource.org/licenses/AFL-3.0
+*
+* DISCLAIMER
+*
+* Do not edit or add to this file if you wish to upgrade this module to a newer
+* versions in the future. If you wish to customize this module for your needs
+* please refer to CustomizationPolicy.txt file inside our module for more information.
+*
+* @author Webkul IN
+* @copyright Since 2010 Webkul
+* @license https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
+*/
 
 $(document).ready(function() {
     //load Tinymce
@@ -172,7 +172,7 @@ $(document).ready(function() {
         }
     });
 
-    if (typeof(backend_controller) != 'undefined' && typeof(ticketId) == 'undefined') { //at admin list page only
+    if (typeof backend_controller != 'undefined' && typeof ticketId == 'undefined') { //at admin list page only
         loadFilterData('group'); //Call group on page load
         loadFilterData('team'); //Call team on page load
         loadFilterData('priority'); //Call priority on page load
@@ -321,7 +321,7 @@ $(document).ready(function() {
         return false;
     });
 
-    if (typeof(ticketId) != 'undefined') { //at view ticket page only
+    if (typeof ticketId != 'undefined') { //at view ticket page only
         loadTicketThreads(ticketId, 1);
 
         $(document).on('click', '.show-more-thread', function() {
