@@ -1,23 +1,22 @@
 <?php
 /**
-* 2010-2019 Webkul.
-*
 * NOTICE OF LICENSE
 *
-* All right is reserved,
-* Please go through this link for complete license : https://store.webkul.com/license.html
+* This source file is subject to the Academic Free License version 3.0
+* that is bundled with this package in the file LICENSE.txt
+* It is also available through the world-wide-web at this URL:
+* https://opensource.org/licenses/AFL-3.0
 *
 * DISCLAIMER
 *
-* Do not edit or add to this file if you wish to upgrade this module to newer
-* versions in the future. If you wish to customize this module for your
-* needs please refer to https://store.webkul.com/customisation-guidelines/ for more information.
+* Do not edit or add to this file if you wish to upgrade this module to a newer
+* versions in the future. If you wish to customize this module for your needs
+* please refer to CustomizationPolicy.txt file inside our module for more information.
 *
-*  @author    Webkul IN <support@webkul.com>
-*  @copyright 2010-2019 Webkul IN
-*  @license   https://store.webkul.com/license.html
+* @author Webkul IN
+* @copyright Since 2010 Webkul
+* @license https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
 */
-
 class WkUvDeskTicketSystemCustomerTicketListModuleFrontController extends ModuleFrontController
 {
     public function initContent()
@@ -56,14 +55,14 @@ class WkUvDeskTicketSystemCustomerTicketListModuleFrontController extends Module
                         $sort = 't.id';
                     }
 
-                    $filterData = array(
-                        'sort'  => $sort,
+                    $filterData = [
+                        'sort' => $sort,
                         'order' => $order,
-                        'page'  => $page,
+                        'page' => $page,
                         'status' => $status,
                         'search' => $search,
-                        'customer' => $uvdeskCustomerId
-                    );
+                        'customer' => $uvdeskCustomerId,
+                    ];
 
                     $ticketList = $objUvdesk->getTickets($filterData);
                     if (isset($ticketList->tickets)) {
@@ -76,21 +75,21 @@ class WkUvDeskTicketSystemCustomerTicketListModuleFrontController extends Module
                             );
                         }
 
-                        $this->context->smarty->assign(array(
-                                'customerTickets' => $customerTickets,
-                                'ticketAllStatusData' => $ticketList->status,
-                                'tabNumberofTickets' => $ticketList->tabs,
-                                'tabStatus' => $status,
-                                'n' => $ticketList->pagination->numItemsPerPage, //no. of item for per page
-                                'self' => dirname(__FILE__),
-                            ));
+                        $this->context->smarty->assign([
+                            'customerTickets' => $customerTickets,
+                            'ticketAllStatusData' => $ticketList->status,
+                            'tabNumberofTickets' => $ticketList->tabs,
+                            'tabStatus' => $status,
+                            'n' => $ticketList->pagination->numItemsPerPage, // no. of item for per page
+                            'self' => dirname(__FILE__),
+                        ]);
                     }
                 }
             }
             $this->setTemplate('module:wkuvdeskticketsystem/views/templates/front/customerticketlist.tpl');
         } else {
             Tools::redirect(
-                'index.php?controller=authentication&back='.urlencode(
+                'index.php?controller=authentication&back=' . urlencode(
                     $this->context->link->getModuleLink('wkuvdeskticketsystem', 'customerticketlist')
                 )
             );
@@ -100,10 +99,10 @@ class WkUvDeskTicketSystemCustomerTicketListModuleFrontController extends Module
     public function getBreadcrumbLinks()
     {
         $breadcrumb = parent::getBreadcrumbLinks();
-        $breadcrumb['links'][] = array(
+        $breadcrumb['links'][] = [
             'title' => $this->module->l('Ticket List', 'customerticketlist'),
             'url' => '',
-        );
+        ];
 
         return $breadcrumb;
     }
@@ -113,15 +112,15 @@ class WkUvDeskTicketSystemCustomerTicketListModuleFrontController extends Module
         parent::setMedia();
         $this->registerStylesheet(
             'uvdeskticketlist-css',
-            'modules/'.$this->module->name.'/views/css/uvdeskticketlist.css'
+            'modules/' . $this->module->name . '/views/css/uvdeskticketlist.css'
         );
         $this->registerStylesheet(
             'wk-pagination-css',
-            'modules/'.$this->module->name.'/views/css/wk-pagination.css'
+            'modules/' . $this->module->name . '/views/css/wk-pagination.css'
         );
         $this->registerJavascript(
             'uvdeskticketlist-js',
-            'modules/'.$this->module->name.'/views/js/uvdeskticketlist.js'
+            'modules/' . $this->module->name . '/views/js/uvdeskticketlist.js'
         );
     }
 }

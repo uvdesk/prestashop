@@ -1,7 +1,7 @@
 <?php
 
 global $_MODULE;
-$_MODULE = array();
+$_MODULE = [];
 $_MODULE['<{wkuvdeskticketsystem}prestashop>wkuvdeskticketsystem_bb8956c67b82c7444a80c6b2433dd8b4'] = 'Сигурни ли сте, искате да деинсталирате този модул?';
 $_MODULE['<{wkuvdeskticketsystem}prestashop>wkuvdeskticketsystem_119187631b2d394e2f615e39c14ab4fe'] = 'Система PrestaShop Безплатни Helpdesk продажба на билети - UVdesk';
 $_MODULE['<{wkuvdeskticketsystem}prestashop>wkuvdeskticketsystem_b9e703baf84a8ca6c8296cc7b8291fb4'] = 'Клиентът може да създаде билети за неговата / нейната заявка.';

@@ -1,23 +1,22 @@
 <?php
 /**
-* 2010-2019 Webkul.
-*
 * NOTICE OF LICENSE
 *
-* All right is reserved,
-* Please go through this link for complete license : https://store.webkul.com/license.html
+* This source file is subject to the Academic Free License version 3.0
+* that is bundled with this package in the file LICENSE.txt
+* It is also available through the world-wide-web at this URL:
+* https://opensource.org/licenses/AFL-3.0
 *
 * DISCLAIMER
 *
-* Do not edit or add to this file if you wish to upgrade this module to newer
-* versions in the future. If you wish to customize this module for your
-* needs please refer to https://store.webkul.com/customisation-guidelines/ for more information.
+* Do not edit or add to this file if you wish to upgrade this module to a newer
+* versions in the future. If you wish to customize this module for your needs
+* please refer to CustomizationPolicy.txt file inside our module for more information.
 *
-*  @author    Webkul IN <support@webkul.com>
-*  @copyright 2010-2019 Webkul IN
-*  @license   https://store.webkul.com/license.html
+* @author Webkul IN
+* @copyright Since 2010 Webkul
+* @license https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
 */
-
 class WkUvdeskHelper extends ObjectModel
 {
     public $uvdesk_access_token;
@@ -33,9 +32,10 @@ class WkUvdeskHelper extends ObjectModel
      * Get All tickets for all data OR for a specific data ie. by page, by label, by agent, by customer etc
      *
      * @param array $data - collection page specific data
+     *
      * @return object response
      */
-    public function getTickets($data = array())
+    public function getTickets($data = [])
     {
         // Return tickets
         $url = 'tickets.json?';
@@ -44,37 +44,37 @@ class WkUvdeskHelper extends ObjectModel
             $url .= '&status=' . $data['status'];
         }
         if (isset($data['label']) && $data['label']) {
-            $url .= '&'. $data['label'];
+            $url .= '&' . $data['label'];
         }
         if (isset($data['custom_label']) && $data['custom_label']) {
-            $url .= '&label='. $data['custom_label'];
+            $url .= '&label=' . $data['custom_label'];
         }
         if (isset($data['search']) && $data['search']) {
-            $url .= '&search='. $data['search'];
+            $url .= '&search=' . $data['search'];
         }
         if (isset($data['customer']) && $data['customer']) {
-            $url .= '&customer='. $data['customer'];
+            $url .= '&customer=' . $data['customer'];
         }
         if (isset($data['agent']) && $data['agent']) {
-            $url .= '&agent='. $data['agent'];
+            $url .= '&agent=' . $data['agent'];
         }
         if (isset($data['priority']) && $data['priority']) {
-            $url .= '&priority='. $data['priority'];
+            $url .= '&priority=' . $data['priority'];
         }
         if (isset($data['group']) && $data['group']) {
-            $url .= '&group='. $data['group'];
+            $url .= '&group=' . $data['group'];
         }
         if (isset($data['team']) && $data['team']) {
-            $url .= '&team='. $data['team'];
+            $url .= '&team=' . $data['team'];
         }
         if (isset($data['type']) && $data['type']) {
-            $url .= '&type='. $data['type'];
+            $url .= '&type=' . $data['type'];
         }
         if (isset($data['tag']) && $data['tag']) {
-            $url .= '&tag='. $data['tag'];
+            $url .= '&tag=' . $data['tag'];
         }
         if (isset($data['mailbox']) && $data['mailbox']) {
-            $url .= '&mailbox='. $data['mailbox'];
+            $url .= '&mailbox=' . $data['mailbox'];
         }
         if (isset($data['sort']) && $data['sort']) {
             $url .= '&sort=' . $data['sort'];
@@ -83,6 +83,7 @@ class WkUvdeskHelper extends ObjectModel
             $url .= '&direction=' . $data['order'];
         }
         $tickets = $this->callApi($url);
+
         return $tickets;
     }
 
@@ -98,6 +99,7 @@ class WkUvdeskHelper extends ObjectModel
         // Returns ticket
         $url = 'ticket/' . $incrementId . '.json';
         $ticket = $this->callApi($url);
+
         return $ticket;
     }
 
@@ -146,58 +148,62 @@ class WkUvdeskHelper extends ObjectModel
         $data .= $actAsEmail . $lineEnd;
         $data .= '--' . $mimeBoundary . $lineEnd;
 
-        //Add attachment
+        // Add attachment
         if (isset($_FILES['attachment']) && $_FILES['attachment']) {
             $attachmentFile = $_FILES['attachment'];
             foreach ($attachmentFile['name'] as $key => $file) {
-                $fileType = $attachmentFile['type'][$key];
-                $fileName = $attachmentFile['name'][$key];
-                $fileTmpName = $attachmentFile['tmp_name'][$key];
-                if ($fileTmpName) {
-                    $data .= 'Content-Disposition: form-data; name="attachments[]"; filename="'.$fileName.'"'.$lineEnd;
-                    $data .= "Content-Type: $fileType" . $lineEnd . $lineEnd;
-                    $data .= Tools::file_get_contents($fileTmpName) . $lineEnd;
-                    $data .= '--' . $mimeBoundary . $lineEnd;
+                if ($attachmentFile['error'][$key] == 0) {
+                    $fileType = $attachmentFile['type'][$key];
+                    $fileName = $attachmentFile['name'][$key];
+                    $fileTmpName = $attachmentFile['tmp_name'][$key];
+                    if ($fileTmpName) {
+                        $data .= 'Content-Disposition: form-data; name="attachments[]"; filename="' . $fileName . '"' . $lineEnd;
+                        $data .= "Content-Type: $fileType" . $lineEnd . $lineEnd;
+                        $data .= Tools::file_get_contents($fileTmpName) . $lineEnd;
+                        $data .= '--' . $mimeBoundary . $lineEnd;
+                    }
                 }
             }
         }
 
-        //Add custom field according to plan
+        // Add custom field according to plan
         if ($customFields) {
             foreach ($customFields as $customFieldId => $customFieldValue) {
                 if ($customFieldValue) {
                     if (is_array($customFieldValue)) {
                         foreach ($customFieldValue as $customEachValue) {
                             $data .= '--' . $mimeBoundary . $lineEnd;
-                            $data .= 'Content-Disposition: form-data; name="customFields['.$customFieldId.'][]"'.$lineEnd.$lineEnd;
+                            $data .= 'Content-Disposition: form-data; name="customFields[' . $customFieldId . '][]"' . $lineEnd . $lineEnd;
                             $data .= $customEachValue . $lineEnd;
                         }
                     } else {
                         $data .= '--' . $mimeBoundary . $lineEnd;
-                        $data .= 'Content-Disposition: form-data; name="customFields['.$customFieldId.']"'.$lineEnd.$lineEnd;
+                        $data .= 'Content-Disposition: form-data; name="customFields[' . $customFieldId . ']"' . $lineEnd . $lineEnd;
                         $data .= $customFieldValue . $lineEnd;
                     }
                 }
             }
         }
 
-        //If file exist with custom field
+        // If file exist with custom field
         if (isset($_FILES['customFields']) && $_FILES['customFields']) {
             $customFieldsFile = $_FILES['customFields'];
             foreach ($customFieldsFile['name'] as $customFileFieldId => $customFile) {
-                $customfileType = $customFieldsFile['type'][$customFileFieldId];
-                $customfileName = $customFieldsFile['name'][$customFileFieldId];
-                $customfileTmpName = $customFieldsFile['tmp_name'][$customFileFieldId];
-                if ($customfileTmpName) {
-                    $data .= '--' . $mimeBoundary . $lineEnd;
-                    $data .= 'Content-Disposition: form-data; name="customFields['.$customFileFieldId.']"; filename="' . $customfileName . '"' . $lineEnd;
-                    $data .= "Content-Type: $customfileType" . $lineEnd . $lineEnd;
-                    $data .= Tools::file_get_contents($customfileTmpName) . $lineEnd;
+                if ($customFieldsFile['error'][$customFileFieldId] == 0) {
+                    $customfileType = $customFieldsFile['type'][$customFileFieldId];
+                    $customfileName = $customFieldsFile['name'][$customFileFieldId];
+                    $customfileTmpName = $customFieldsFile['tmp_name'][$customFileFieldId];
+                    if ($customfileTmpName) {
+                        $data .= '--' . $mimeBoundary . $lineEnd;
+                        $data .= 'Content-Disposition: form-data; name="customFields[' . $customFileFieldId . ']"; filename="' . $customfileName . '"' . $lineEnd;
+                        $data .= "Content-Type: $customfileType" . $lineEnd . $lineEnd;
+                        $data .= Tools::file_get_contents($customfileTmpName) . $lineEnd;
+                    }
                 }
             }
         }
 
-        $data .= "--" . $mimeBoundary . "--" . $lineEnd . $lineEnd;
+        $data .= '--' . $mimeBoundary . '--' . $lineEnd . $lineEnd;
         $ticket = $this->postApi($url, $data, 'POST', $mimeBoundary);
 
         return $ticket;
@@ -213,10 +219,11 @@ class WkUvdeskHelper extends ObjectModel
     public function deleteTickets($ticketIds)
     {
         $url = 'tickets.json';
-        $data = array(
-            'ids' => $ticketIds
-            );
+        $data = [
+            'ids' => $ticketIds,
+        ];
         $response = $this->postApi($url, $data, 'DELETE');
+
         return $response;
     }
 
@@ -233,6 +240,7 @@ class WkUvdeskHelper extends ObjectModel
         $url .= 'email=' . $customerEmail;
 
         $customer = $this->callApi($url);
+
         return $customer;
     }
 
@@ -247,6 +255,7 @@ class WkUvdeskHelper extends ObjectModel
     {
         $url = 'customers.json?search=' . $name;
         $ticket = $this->callApi($url);
+
         return $ticket;
     }
 
@@ -259,8 +268,9 @@ class WkUvdeskHelper extends ObjectModel
      */
     public function getCustomersById($idCustomer)
     {
-        $url = 'customer/'.$idCustomer.'.json';
+        $url = 'customer/' . $idCustomer . '.json';
         $ticket = $this->callApi($url);
+
         return $ticket;
     }
 
@@ -274,11 +284,12 @@ class WkUvdeskHelper extends ObjectModel
     public function getMembers($name = false)
     {
         if ($name) {
-            $url = 'members.json?search='.$name;
+            $url = 'members.json?search=' . $name;
         } else {
             $url = 'members.json?fullList=1';
         }
         $ticket = $this->callApi($url);
+
         return $ticket;
     }
 
@@ -292,11 +303,12 @@ class WkUvdeskHelper extends ObjectModel
      */
     public function addCollaborator($ticketId, $email)
     {
-        $url = 'ticket/'.$ticketId.'/collaborator.json';
-        $data = array(
-                'email' => $email
-            );
+        $url = 'ticket/' . $ticketId . '/collaborator.json';
+        $data = [
+            'email' => $email,
+        ];
         $response = $this->postApi($url, $data, 'POST');
+
         return $response;
     }
 
@@ -310,11 +322,12 @@ class WkUvdeskHelper extends ObjectModel
      */
     public function removeCollaborator($ticketId, $collaboratorId)
     {
-        $url = 'ticket/'.$ticketId.'/collaborator.json';
-        $data = array(
-                'collaboratorId' => $collaboratorId
-            );
+        $url = 'ticket/' . $ticketId . '/collaborator.json';
+        $data = [
+            'collaboratorId' => $collaboratorId,
+        ];
         $response = $this->postApi($url, $data, 'DELETE');
+
         return $response;
     }
 
@@ -329,6 +342,7 @@ class WkUvdeskHelper extends ObjectModel
     {
         $url = 'tags.json?search=' . $name;
         $ticket = $this->callApi($url);
+
         return $ticket;
     }
 
@@ -347,6 +361,7 @@ class WkUvdeskHelper extends ObjectModel
             $url .= '?page=' . $page;
         }
         $threads = $this->callApi($url);
+
         return $threads;
     }
 
@@ -369,39 +384,42 @@ class WkUvdeskHelper extends ObjectModel
         $data .= $reply . $lineEnd;
         $data .= '--' . $mimeBoundary . $lineEnd;
         $data .= 'Content-Disposition: form-data; name="threadType"' . $lineEnd . $lineEnd;
-        $data .= "reply" . $lineEnd;
+        $data .= 'reply' . $lineEnd;
         $data .= '--' . $mimeBoundary . $lineEnd;
         // attachements
 
         // act as type (type of user making reply to differentiate whether the user is customer or agent)
         $data .= 'Content-Disposition: form-data; name="actAsType"' . $lineEnd . $lineEnd;
-        $data .= "".$actAsType."" . $lineEnd;
+        $data .= '' . $actAsType . '' . $lineEnd;
         $data .= '--' . $mimeBoundary . $lineEnd;
 
         if ($actAsType == 'customer') {
             $customerEmail = Context::getContext()->customer->email;
             // act as email (differentiate whether the reply is made by customer or collaborator)
             $data .= 'Content-Disposition: form-data; name="actAsEmail"' . $lineEnd . $lineEnd;
-            $data .= "".$customerEmail."" . $lineEnd;
+            $data .= '' . $customerEmail . '' . $lineEnd;
             $data .= '--' . $mimeBoundary . $lineEnd;
         }
 
         if (isset($_FILES['attachment']) && $_FILES['attachment']) {
             $attachmentFile = $_FILES['attachment'];
             foreach ($attachmentFile['name'] as $key => $file) {
-                $fileType = $attachmentFile['type'][$key];
-                $fileName = $attachmentFile['name'][$key];
-                $fileTmpName = $attachmentFile['tmp_name'][$key];
-                if ($fileTmpName) {
-                    $data .= 'Content-Disposition: form-data; name="attachments[]"; filename="'.$fileName.'"'.$lineEnd;
-                    $data .= "Content-Type: $fileType" . $lineEnd . $lineEnd;
-                    $data .= Tools::file_get_contents($fileTmpName) . $lineEnd;
-                    $data .= '--' . $mimeBoundary . $lineEnd;
+                if ($attachmentFile['error'][$key] == 0) {
+                    $fileType = $attachmentFile['type'][$key];
+                    $fileName = $attachmentFile['name'][$key];
+                    $fileTmpName = $attachmentFile['tmp_name'][$key];
+                    if ($fileTmpName) {
+                        $data .= 'Content-Disposition: form-data; name="attachments[]"; filename="' . $fileName . '"' . $lineEnd;
+                        $data .= "Content-Type: $fileType" . $lineEnd . $lineEnd;
+                        $data .= Tools::file_get_contents($fileTmpName) . $lineEnd;
+                        $data .= '--' . $mimeBoundary . $lineEnd;
+                    }
                 }
             }
         }
-        $data .= "--" . $mimeBoundary . "--" . $lineEnd . $lineEnd;
+        $data .= '--' . $mimeBoundary . '--' . $lineEnd . $lineEnd;
         $response = $this->postApi($url, $data, 'POST', $mimeBoundary);
+
         return $response;
     }
 
@@ -414,27 +432,29 @@ class WkUvdeskHelper extends ObjectModel
      */
     public function getFilteredData($data)
     {
-        $url = 'filters.json?'.$data.'=1';
+        $url = 'filters.json?' . $data . '=1';
 
         $response = $this->callApi($url);
+
         return $response;
     }
 
     /**
      * Assign ticket to any agent (member)
      *
-     * @param int $ticketId  - ticket id
-     * @param int $memberId  - member id
+     * @param int $ticketId - ticket id
+     * @param int $memberId - member id
      *
      * @return object response
      */
     public function assignAgent($ticketId, $memberId)
     {
         $url = 'ticket/' . $ticketId . '/agent.json';
-        $data = array(
-            'id' => $memberId
-            );
+        $data = [
+            'id' => $memberId,
+        ];
         $response = $this->postApi($url, $data, 'PUT');
+
         return $response;
     }
 
@@ -450,7 +470,7 @@ class WkUvdeskHelper extends ObjectModel
         if ($attachmentId) {
             $companyDomain = $this->uvdesk_company_domain;
             $accessToken = $this->uvdesk_access_token;
-            $downloadURL = 'https://'.$companyDomain.'.uvdesk.com/en/api/ticket/attachment/'.$attachmentId.'.json?access_token='.$accessToken;
+            $downloadURL = 'https://' . $companyDomain . '.uvdesk.com/en/api/ticket/attachment/' . $attachmentId . '.json?access_token=' . $accessToken;
 
             return $downloadURL;
         }
@@ -487,9 +507,9 @@ class WkUvdeskHelper extends ObjectModel
         $url .= $addedUrl;
         $accessToken = $this->uvdesk_access_token;
         $ch = curl_init($url);
-        $headers = array(
+        $headers = [
             'Authorization: Bearer ' . $accessToken,
-        );
+        ];
 
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
         curl_setopt($ch, CURLOPT_HEADER, true);
@@ -504,16 +524,18 @@ class WkUvdeskHelper extends ObjectModel
             return json_decode($response);
         } elseif ($info['http_code'] == 404) {
             curl_close($ch);
-            return array(
+
+            return [
                 'error' => 1,
-                'description' => 'Error, resource not found (http-code: 404)'
-                );
+                'description' => 'Error, resource not found (http-code: 404)',
+            ];
         } else {
             curl_close($ch);
+
             return json_decode($response);
         }
         curl_close($ch);
-        exit();
+        exit;
     }
 
     /**
@@ -538,15 +560,15 @@ class WkUvdeskHelper extends ObjectModel
         }
         $ch = curl_init($url);
         if ($mimeBoundary) {
-            $headers = array(
-                "Authorization: Bearer ".$accessToken,
-                "Content-type: multipart/form-data; boundary=" . $mimeBoundary,
-            );
-        } else {
-            $headers = array(
+            $headers = [
                 'Authorization: Bearer ' . $accessToken,
-                'Content-type: application/json'
-            );
+                'Content-type: multipart/form-data; boundary=' . $mimeBoundary,
+            ];
+        } else {
+            $headers = [
+                'Authorization: Bearer ' . $accessToken,
+                'Content-type: application/json',
+            ];
         }
         curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
@@ -564,25 +586,29 @@ class WkUvdeskHelper extends ObjectModel
         $response = Tools::substr($server_output, $header_size);
         if ($info['http_code'] == 200 || $info['http_code'] == 201) {
             curl_close($ch);
+
             return json_decode($response);
         } elseif ($info['http_code'] == 400 || $info['http_code'] == 401) {
             curl_close($ch);
+
             return json_decode($response);
         } elseif ($info['http_code'] == 404) {
             $response = '{"error":"invalid_grant","error_description":"Resource not found (http-code: 404)"}';
             curl_close($ch);
+
             return json_decode($response);
-        } elseif ($info['http_code'] == 0) { //wrong domain
+        } elseif ($info['http_code'] == 0) { // wrong domain
             $response = '{"error":"invalid_grant","error_description":"Domain name is invalid."}';
             curl_close($ch);
+
             return json_decode($response);
         } else {
-            echo "Error, HTTP Status Code : " . $info['http_code'] . "\n";
-            echo "Headers are ".$headers;
-            echo "Response are ".$response;
+            echo 'Error, HTTP Status Code : ' . $info['http_code'] . "\n";
+            echo 'Headers are ' . $headers;
+            echo 'Response are ' . $response;
         }
         curl_close($ch);
-        exit();
+        exit;
     }
 
     /**
@@ -598,28 +624,28 @@ class WkUvdeskHelper extends ObjectModel
 
         // Retrieve the default number of products per page and the other available selections
         if ($itemsPerPage) {
-            $default_products_per_page = max(1, (int)$itemsPerPage);
+            $default_products_per_page = max(1, (int) $itemsPerPage);
         } else {
-            $default_products_per_page = max(1, (int)Configuration::get('PS_PRODUCTS_PER_PAGE'));
+            $default_products_per_page = max(1, (int) Configuration::get('PS_PRODUCTS_PER_PAGE'));
         }
-        $n_array = array($default_products_per_page, $default_products_per_page * 2, $default_products_per_page * 5);
+        $n_array = [$default_products_per_page, $default_products_per_page * 2, $default_products_per_page * 5];
 
-        if ((int)Tools::getValue('n') && (int)$total_products > 0) {
+        if ((int) Tools::getValue('n') && (int) $total_products > 0) {
             $n_array[] = $total_products;
         }
 
         $this->n = $default_products_per_page;
         if (isset($this->context->cookie->nb_item_per_page)
         && in_array($this->context->cookie->nb_item_per_page, $n_array)) {
-            $this->n = (int)$this->context->cookie->nb_item_per_page;
+            $this->n = (int) $this->context->cookie->nb_item_per_page;
         }
 
-        if ((int)Tools::getValue('n') && in_array((int)Tools::getValue('n'), $n_array)) {
-            $this->n = (int)Tools::getValue('n');
+        if ((int) Tools::getValue('n') && in_array((int) Tools::getValue('n'), $n_array)) {
+            $this->n = (int) Tools::getValue('n');
         }
 
         // Retrieve the page number (either the GET parameter or the first page)
-        $this->p = (int)Tools::getValue('p', 1);
+        $this->p = (int) Tools::getValue('p', 1);
         if (!is_numeric($this->p) || $this->p < 1) {
             Tools::redirect($this->context->link->getPaginationLink(false, false, $this->n, false, 1, false));
         }
@@ -631,39 +657,39 @@ class WkUvdeskHelper extends ObjectModel
             $this->context->cookie->nb_item_per_page = $this->n;
         }
 
-        $pages_nb = ceil($total_products / (int)$this->n);
+        $pages_nb = ceil($total_products / (int) $this->n);
         if ($this->p > $pages_nb && $total_products != 0) {
             Tools::redirect($this->context->link->getPaginationLink(false, false, $this->n, false, $pages_nb, false));
         }
 
         $range = 2; /* how many pages around page selected */
-        $start = (int)($this->p - $range);
+        $start = (int) ($this->p - $range);
         if ($start < 1) {
             $start = 1;
         }
 
-        $stop = (int)($this->p + $range);
+        $stop = (int) ($this->p + $range);
         if ($stop > $pages_nb) {
-            $stop = (int)$pages_nb;
+            $stop = (int) $pages_nb;
         }
 
-        $this->context->smarty->assign(array(
-            'nb_products'       => $total_products,
+        $this->context->smarty->assign([
+            'nb_products' => $total_products,
             'products_per_page' => $this->n,
-            'pages_nb'          => $pages_nb,
-            'p'                 => $this->p,
-            'n'                 => $this->n,
-            'nArray'            => $n_array,
-            'range'             => $range,
-            'start'             => $start,
-            'stop'              => $stop,
-            'current_url'       => $current_url,
-        ));
+            'pages_nb' => $pages_nb,
+            'p' => $this->p,
+            'n' => $this->n,
+            'nArray' => $n_array,
+            'range' => $range,
+            'start' => $start,
+            'stop' => $stop,
+            'current_url' => $current_url,
+        ]);
     }
 
     public static function storeTicketCustomFieldValues($ticketCustomFieldValues)
     {
-        $customFieldValues = array();
+        $customFieldValues = [];
         if ($ticketCustomFieldValues) {
             foreach ($ticketCustomFieldValues as $fieldKey => $fieldValues) {
                 $customFieldType = $fieldValues->ticketCustomFieldsValues->fieldType;
@@ -679,7 +705,7 @@ class WkUvdeskHelper extends ObjectModel
                         $customFieldValues[$fieldKey]['value'] = $fieldValues->ticketCustomFieldValueValues->name;
                     }
                 } elseif ($customFieldType == 'file') {
-                    $customFieldValues[$fieldKey]['value'] = Tools::jsonDecode($fieldValues->value);
+                    $customFieldValues[$fieldKey]['value'] = json_decode($fieldValues->value);
                 }
             }
         }
