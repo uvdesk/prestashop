@@ -1,22 +1,22 @@
 <?php
 /**
-* NOTICE OF LICENSE
-*
-* This source file is subject to the Academic Free License version 3.0
-* that is bundled with this package in the file LICENSE.txt
-* It is also available through the world-wide-web at this URL:
-* https://opensource.org/licenses/AFL-3.0
-*
-* DISCLAIMER
-*
-* Do not edit or add to this file if you wish to upgrade this module to a newer
-* versions in the future. If you wish to customize this module for your needs
-* please refer to CustomizationPolicy.txt file inside our module for more information.
-*
-* @author Webkul IN
-* @copyright Since 2010 Webkul
-* @license https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
-*/
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License version 3.0
+ * that is bundled with this package in the file LICENSE.txt
+ * It is also available through the world-wide-web at this URL:
+ * https://opensource.org/licenses/AFL-3.0
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this module to a newer
+ * versions in the future. If you wish to customize this module for your needs
+ * please refer to CustomizationPolicy.txt file inside our module for more information.
+ *
+ * @author Webkul IN
+ * @copyright Since 2010 Webkul
+ * @license https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
+ */
 class WkUvDeskTicketSystemViewTicketModuleFrontController extends ModuleFrontController
 {
     public function initContent()
@@ -65,11 +65,11 @@ class WkUvDeskTicketSystemViewTicketModuleFrontController extends ModuleFrontCon
                                     ['id' => $incrementId]
                                 ),
                                 'confirm_delete' => $this->module->l('Are you sure want to delete?', 'viewticket'),
-                                'max_file' => $this->module->l('Maximum Number of file is ', 'viewticket'),
+                                'max_file' => $this->module->l('Maximum number of file is ', 'viewticket'),
                                 'invalid_file' => $this->module->l('Invalid file type or size', 'viewticket'),
                                 'some_error' => $this->module->l('Some error occured', 'viewticket'),
-                                'all_expended' => $this->module->l('All Expanded', 'viewticket'),
-                                'show_more' => $this->module->l('Show More', 'viewticket'),
+                                'all_expended' => $this->module->l('All expanded', 'viewticket'),
+                                'show_more' => $this->module->l('Show more', 'viewticket'),
                                 'replied' => $this->module->l('replied', 'viewticket'),
                             ]);
 
@@ -193,13 +193,13 @@ class WkUvDeskTicketSystemViewTicketModuleFrontController extends ModuleFrontCon
             $ticketThreads = $objUvdesk->getThreads($ticketId, $threadPage);
             if (isset($ticketThreads->threads) && $ticketThreads->threads) {
                 $ascendingThreads = array_reverse($ticketThreads->threads);
-                die(json_encode([
+                exit(json_encode([
                     'threads' => (array) $ascendingThreads,
                     'threadsPagination' => $ticketThreads->pagination,
                 ]));
             }
         }
-        die('0');
+        exit('0');
     }
 
     public function displayAjaxDeleteCollaborator()
@@ -211,10 +211,10 @@ class WkUvDeskTicketSystemViewTicketModuleFrontController extends ModuleFrontCon
             $deleteSuccess = $objUvdesk->removeCollaborator($ticketId, $collaboratorId);
             $deleteSuccess = (array) $deleteSuccess;
             if (!isset($deleteSuccess['error'])) {
-                die(json_encode($deleteSuccess));
+                exit(json_encode($deleteSuccess));
             }
         }
-        die('0');
+        exit('0');
     }
 
     public function getBreadcrumbLinks()

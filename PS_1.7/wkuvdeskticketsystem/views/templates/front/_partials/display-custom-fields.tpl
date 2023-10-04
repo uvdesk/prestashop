@@ -40,7 +40,7 @@
                                         {$visiValues}<br>
                                     {/foreach}
                                 {else}
-                                    {$fieldValues.visibleValues}
+                                    {$fieldValues.visibleValues|replace:'\r\n':'<br>' nofilter}
                                 {/if}
                             {/if}
                         </div>

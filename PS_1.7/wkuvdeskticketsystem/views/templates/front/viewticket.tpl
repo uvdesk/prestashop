@@ -55,7 +55,11 @@
 			            #{if isset($ticket->incrementId)}{$ticket->incrementId}{/if} {if isset($ticket->subject)}{$ticket->subject}{/if}
 			        </h4>
 		          	<div class="ticket-labels">
-			            <span class="label label-default">{$ticket->formatedCreatedAt}</span>
+						{if isset($ticket->formatedCreatedAt) && $ticket->formatedCreatedAt}
+			            	<span class="label label-default">
+								{$ticket->formatedCreatedAt}
+							</span>
+						{/if}
 			            {if isset($ticket->status->id)}
 			            	<span class="label label-default" title="Threads">{$ticketTotalThreads} {l s='Replies' mod='wkuvdeskticketsystem'}</span>
 			            {/if}
@@ -68,22 +72,24 @@
 		        <div class="thread">
 			        <div class="col-md-12 thread-created-info text-center">
 			            <span class="info">
-			            	{if isset($ticket->customer->detail->customer->id)}{$ticket->customer->detail->customer->name}{/if} {l s='created a ticket' mod='wkuvdeskticketsystem'}
+			            	{if isset($ticket->customer->id)}{$ticket->customer->detail->name}{/if} {l s='created a ticket' mod='wkuvdeskticketsystem'}
 			            </span>
-			            <span class="text-right date pull-right">
-			            	{if isset($ticket->formatedCreatedAt)}{$ticket->formatedCreatedAt}{/if}
-			            </span>
+						{if isset($ticket->formatedCreatedAt) && $ticket->formatedCreatedAt}
+			            	<span class="text-right date pull-right">
+								{$ticket->formatedCreatedAt}
+							</span>
+						{/if}
 			        </div>
 			        <div class="col-md-12">
 			        	<div class="">
 				            <div class="pull-left">
 				            	<span class="round-tabs">
-				                	<img src="{if isset($ticket->customer->profileImage)}{$ticket->customer->profileImage}{else}{$smarty.const._MODULE_DIR_}wkuvdeskticketsystem/views/img/wk-uvdesk-user.png{/if}">
+				                	<img src="{if isset($ticket->customer->profileImage) && $ticket->customer->profileImage}{$ticket->customer->profileImage}{else}{$smarty.const._MODULE_DIR_}wkuvdeskticketsystem/views/img/wk-uvdesk-user.png{/if}">
 				            	</span>
 				            </div>
 				            <div class="thread-info">
 					            <div class="thread-info-row first">
-					            	<span class="cust-name">{if isset($ticket->customer->detail->customer->id)}{$ticket->customer->detail->customer->name}{/if}</span>
+					            	<span class="cust-name">{if isset($ticket->customer->id)}{$ticket->customer->detail->name}{/if}</span>
 					            </div>
 					            <div class="thread-info-row"></div>
 				            </div>
@@ -121,7 +127,11 @@
 				            </span>
 			        	</div>
 			        	<div class="thread-info">
-			        		<span class="cust-name">{$ticket->customer->detail->customer->name}</span>
+			        		<span class="cust-name">
+								{if isset($ticket->customer->detail->name)}
+									{$ticket->customer->detail->name}
+								{/if}
+								</span>
 			        	</div>
 			        	<div class="clearfix"></div>
 			        </div>

@@ -260,6 +260,7 @@
     border-radius: 10px;
     padding: 4px 10px;
     margin-right: 8px;
+    white-space: nowrap;
 }
 
 .ticket-labels .label-default {
@@ -634,4 +635,18 @@ label.required::before {
 #wk_uvdesk_ticket .input-group-addon {
     padding: 0.4rem 0.75rem !important;
     width: auto;
+}
+
+@media (max-width: 380px){
+    .wk-module-item-list .nav-tabs>li {
+        width: 30%;
+        float: left;
+    }
+}
+
+@media (max-width: 250px){
+    .wk-module-item-list .nav-tabs>li {
+        width: 50%;
+        float: left;
+    }
 }

@@ -30,7 +30,13 @@
                     <div class="coll-div" id="coll-div-{$collaborator->id}">
                         <img src="{if $collaborator->smallThumbnail}{$collaborator->smallThumbnail}{else}{$smarty.const._MODULE_DIR_}wkuvdeskticketsystem/views/img/wk-uvdesk-user.png{/if}" class="img-responsive pull-left">
                         <span>
-                            {if isset($collaborator->detail->agent)}{$collaborator->detail->agent->name}{else}{$collaborator->detail->customer->name}{/if}
+                            {if isset($collaborator->detail->agent)}
+                                {$collaborator->detail->agent->name}
+                            {elseif isset($collaborator->detail->customer->name)}
+                                {$collaborator->detail->customer->name}
+                            {elseif isset($collaborator->email)}
+                                {$collaborator->email}
+                            {/if}
                         </span>
                         <div class="pull-right removeCollaborator" data-col-id="{$collaborator->id}">
                             <i class="material-icons">&#xE872;</i>

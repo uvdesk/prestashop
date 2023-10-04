@@ -1,22 +1,22 @@
 <?php
 /**
-* NOTICE OF LICENSE
-*
-* This source file is subject to the Academic Free License version 3.0
-* that is bundled with this package in the file LICENSE.txt
-* It is also available through the world-wide-web at this URL:
-* https://opensource.org/licenses/AFL-3.0
-*
-* DISCLAIMER
-*
-* Do not edit or add to this file if you wish to upgrade this module to a newer
-* versions in the future. If you wish to customize this module for your needs
-* please refer to CustomizationPolicy.txt file inside our module for more information.
-*
-* @author Webkul IN
-* @copyright Since 2010 Webkul
-* @license https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
-*/
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License version 3.0
+ * that is bundled with this package in the file LICENSE.txt
+ * It is also available through the world-wide-web at this URL:
+ * https://opensource.org/licenses/AFL-3.0
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this module to a newer
+ * versions in the future. If you wish to customize this module for your needs
+ * please refer to CustomizationPolicy.txt file inside our module for more information.
+ *
+ * @author Webkul IN
+ * @copyright Since 2010 Webkul
+ * @license https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
+ */
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -30,9 +30,9 @@ class WkUvDeskTicketSystem extends Module
         $this->author = 'Webkul';
         $this->need_instance = 0;
         $this->bootstrap = true;
-        $this->version = '4.0.3';
+        $this->version = '4.0.4';
         $this->ps_versions_compliancy = ['min' => '1.7', 'max' => _PS_VERSION_];
-        $this->confirmUnistall = $this->l('Are you sure you want to uninstall this module?');
+        $this->confirmUninstall = $this->l('Are you sure you want to uninstall this module?');
         parent::__construct();
         $this->displayName = $this->l('UVdesk - Prestashop Free Helpdesk Ticket System');
         $this->description = $this->l('Customer can create tickets for his/her query.');
