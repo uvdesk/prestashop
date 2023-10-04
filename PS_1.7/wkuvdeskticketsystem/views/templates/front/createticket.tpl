@@ -35,7 +35,7 @@
 									<div class="row">
 										<div class="col-md-5">
 											<select name="type" id="ticket-type" class="form-control form-control-select" required>
-												<option value="">{l s='Select Type' mod='wkuvdeskticketsystem'}</option>
+												<option value="">{l s='Select type' mod='wkuvdeskticketsystem'}</option>
 												{foreach $ticketTypes as $types}
 													<option value="{$types->id}">{$types->name|escape:'htmlall':'UTF-8'}</option>
 												{/foreach}
@@ -47,11 +47,11 @@
 							{/if}
 				            <div class="form-group">
 				                <label for="subject" class="control-label required">{l s='Subject' mod='wkuvdeskticketsystem'}</label>
-				                <input type="text" name="subject" class="form-control" placeholder="{l s='Enter Subject' mod='wkuvdeskticketsystem'}" value="" required>
+				                <input type="text" name="subject" class="form-control" placeholder="{l s='Enter subject' mod='wkuvdeskticketsystem'}" value="" required>
 				            </div>
 			             	<div class="form-group required">
 				                <label for="message" class="control-label required">{l s='Message' mod='wkuvdeskticketsystem'}</label>
-				                <textarea name="message" class="form-control" placeholder="{l s='Brief Description about your query' mod='wkuvdeskticketsystem'}" rows="5" required></textarea>
+				                <textarea name="message" class="form-control" placeholder="{l s='Brief description about your query' mod='wkuvdeskticketsystem'}" rows="5" required></textarea>
 			              	</div>
 							<div class="form-group attachment-div">
 								<div class="labelWidget">
@@ -60,7 +60,7 @@
 									{*In PS V1.6 uploader class automatically added but in PS V1.7, we need to add this class as a div *}
 									<div class="uploader" style="display:none;"><input type="file" name="attachment[]" class="fileUpload"></div>
 								</div>
-								<span id="addFile">+ {l s='Attach File' mod='wkuvdeskticketsystem'}</span>
+								<span id="addFile">+ {l s='Attach file' mod='wkuvdeskticketsystem'}</span>
 								<div class="clearfix"></div>
 							</div>
 							{*Display custom field according to plan*}

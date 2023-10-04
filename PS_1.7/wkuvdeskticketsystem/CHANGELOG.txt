@@ -1,4 +1,25 @@
 ##########################################################################
+Change Log : V4.0.3 To V4.0.4 | COMPATIBLE:: PRESTASHOP V1.7 & V8.x.x
+##########################################################################
+
+## Update Policy :
+	- Module need only file update, can be updated only by UPLOADING new version on module
+
+## Bug Fixed:
+	- Fixed fatal error issue in backoffice after add collaborator
+	- Fixed date display issue on view ticket
+	- Remove space from access token and company domain
+	- Remove Tools::displayError() from validation error
+	- Fixed textarea customer new line break issue
+	- Sort ticket list by last updated on admin and customer both end
+	- Fixed redirection issue after filter agent, customer etc.
+	- Fixed customer name issue on first thread and last reply section
+	- Fixed responsiveness related issues.
+	- Fixed validation issue on create ticket.
+	- Fixed validation issue on configuration page.
+
+
+##########################################################################
 Change Log : V4.0.2 To V4.0.3 | COMPATIBLE:: PRESTASHOP V1.7 & V8.x.x
 ##########################################################################
 

@@ -424,14 +424,18 @@ function loadTicketThreads(ticketId, threadPage) {
                 if (resultThreads !== null && resultThreads != '0') {
                     var threadHTML = '';
                     $.each(resultThreads.threads, function(tindex, thread) {
-                        threadHTML += '<div class="thread"><div class="col-sm-12 thread-created-info text-center"><span class="info"><span id="thread' + thread.id + '" class="copy-thread-link">#' + thread.id + '</span> ' + thread.fullname + ' ' + replied + '</span><span class="text-right date pull-right">' + thread.formatedCreatedAt + '</span></div><div class="col-sm-12"><div class=""><div class="pull-left"><span class="round-tabs">';
-                        if (thread.user.smallThumbnail) {
+                        threadHTML += '<div class="thread"><div class="col-sm-12 thread-created-info text-center"><span class="info"><span id="thread' + thread.id + '" class="copy-thread-link">#' + thread.id + '</span> ' + thread.fullname + ' ' + replied + '</span>';
+                        if (typeof thread.formatedCreatedAt !== 'undefined' && thread.formatedCreatedAt !== null) {
+                            threadHTML += '<span class="text-right date pull-right">' + thread.formatedCreatedAt + '</span>';
+                        }
+                        threadHTML += '</div><div class="col-sm-12"><div class=""><div class="pull-left"><span class="round-tabs">';
+                        if (typeof thread.user !== 'undefined' && thread.user !== null && typeof thread.user.smallThumbnail !== 'undefined' && thread.user.smallThumbnail !== null) {
                             threadHTML += '<img src="' + thread.user.smallThumbnail + '">';
                         } else {
                             threadHTML += '<img src="' + wk_uvdesk_user_img + '">';
                         }
                         threadHTML += '</span></div><div class="thread-info"><div class="thread-info-row first"><span class="cust-name"><strong>' + thread.fullname + '</strong></span>';
-                        if (thread.userType) {
+                        if (typeof thread.userType !== 'undefined' && thread.userType !== null) {
                             threadHTML += '<label class="user-type customer label label-info">' + thread.userType + '</label>';
                         }
                         threadHTML += '</div><div class="thread-info-row"></div></div><div class="clearfix"></div></div><div class="thread-body"><div class="reply"><div class="main-reply">' + thread.reply + '</div></div>';
@@ -494,7 +498,7 @@ function getAllAgentList(agentHTML, allAgentDetails, filterAgent) {
 
         $.each(allAgentDetails, function(index, agentDetail) {
             if (filterAgent) { //if search by filter
-                agentHTML += '<li><a href="' + uvdesk_ticket_controller + extraParams + '&agent=' + agentDetail.id + '">';
+                agentHTML += '<li><a href="' + wk_whole_url + extraParams + '&agent=' + agentDetail.id + '">';
             } else {
                 agentHTML += '<li class="assignAgentBtn" data-member-id="' + agentDetail.id + '" data-name="' + agentDetail.name + '"><a>';
             }
@@ -607,7 +611,7 @@ function getAllFilteredList(filterHTML, allFilterDetails, filterValue) {
         }
 
         $.each(allFilterDetails, function(index, filterDetail) {
-            filterHTML += '<li><a href="' + uvdesk_ticket_controller + extraParams + '&' + filterValue + '=' + filterDetail.id + '">';
+            filterHTML += '<li><a href="' + wk_whole_url + extraParams + '&' + filterValue + '=' + filterDetail.id + '">';
             if (filterDetail.smallThumbnail) {
                 filterHTML += '<span class="round-tabs two"><img src="' + filterDetail.smallThumbnail + '"></span>';
             } else {

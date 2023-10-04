@@ -44,7 +44,11 @@
 				            #{if isset($ticket->incrementId)}{$ticket->incrementId}{/if} {if isset($ticket->subject)}{$ticket->subject}{/if}
 				        </h4>
 			          	<div class="ticket-labels">
-				            <span class="label label-default">{$ticket->formatedCreatedAt}</span>
+							{if isset($ticket->formatedCreatedAt) && $ticket->formatedCreatedAt}
+				            	<span class="label label-default">
+									{$ticket->formatedCreatedAt}
+								</span>
+							{/if}
 				            {if isset($ticket->status->id)}
 				            	<span class="label label-default" title="Threads">{$ticketTotalThreads} {l s='Replies' mod='wkuvdeskticketsystem'}</span>
 				            {/if}
@@ -57,21 +61,23 @@
 			        <div class="thread">
 				        <div class="col-md-12 thread-created-info text-center">
 				            <span class="info">
-				            	{if isset($ticket->customer->detail->customer->id)}{$ticket->customer->detail->customer->name}{/if} {l s='created a ticket' mod='wkuvdeskticketsystem'}
+				            	{if isset($ticket->customer->id)}{$ticket->customer->detail->name}{/if} {l s='created a ticket' mod='wkuvdeskticketsystem'}
 				            </span>
-				            <span class="text-right date pull-right">
-				            	{if isset($ticket->formatedCreatedAt)}{$ticket->formatedCreatedAt}{/if}
-				            </span>
+							{if isset($ticket->formatedCreatedAt) && $ticket->formatedCreatedAt}
+				            	<span class="text-right date pull-right">
+									{$ticket->formatedCreatedAt}
+								</span>
+							{/if}
 				        </div>
 				        <div class="col-md-12">
 				            <div class="pull-left">
 				            	<span class="round-tabs">
-				                	<img src="{if isset($ticket->customer->profileImage)}{$ticket->customer->profileImage}{else}{$smarty.const._MODULE_DIR_}wkuvdeskticketsystem/views/img/wk-uvdesk-user.png{/if}">
+				                	<img src="{if isset($ticket->customer->profileImage) && $ticket->customer->profileImage}{$ticket->customer->profileImage}{else}{$smarty.const._MODULE_DIR_}wkuvdeskticketsystem/views/img/wk-uvdesk-user.png{/if}">
 				            	</span>
 				            </div>
 				            <div class="thread-info">
 					            <div class="thread-info-row first">
-					            	<span class="cust-name">{if isset($ticket->customer->detail->customer->id)}{$ticket->customer->detail->customer->name}{/if}</span>
+					            	<span class="cust-name">{if isset($ticket->customer->id)}{$ticket->customer->detail->name}{/if}</span>
 					            </div>
 					            <div class="thread-info-row"></div>
 				            </div>
@@ -104,11 +110,11 @@
 			        	<div>
 				        	<div class="pull-left">
 					            <span class="round-tabs">
-					            	<img src="{if isset($userDetails->pic)}{$userDetails->pic}{else}{$smarty.const._MODULE_DIR_}wkuvdeskticketsystem/views/img/wk-uvdesk-user.png{/if}">
+					            	<img src="{if isset($userDetails->pic) && $userDetails->pic}{$userDetails->pic}{else}{$smarty.const._MODULE_DIR_}wkuvdeskticketsystem/views/img/wk-uvdesk-user.png{/if}">
 					            </span>
 				        	</div>
 				        	<div class="thread-info">
-				        		<span class="cust-name">{$userDetails->name}</span>
+				        		<span class="cust-name">{if isset($userDetails->name)}{$userDetails->name}{/if}</span>
 				        	</div>
 				        	<div class="clearfix"></div>
 				        </div>
@@ -145,7 +151,7 @@
 			<div class="col-md-3">
 		    	{include file="$self/../../views/templates/admin/uvdeskticket-labels.tpl"}
 		     	<div class="panel wk-uvdesk-search">
-			        <h3>{l s='Filter Tickets' mod='wkuvdeskticketsystem'}</h3>
+			        <h3>{l s='Filter tickets' mod='wkuvdeskticketsystem'}</h3>
 		          	<div>
 		            	<label for="filter-assigned" class="control-label">{l s='Agent' mod='wkuvdeskticketsystem'}</label>
 			            <div class="pos-relative" filter-type="agent">
@@ -211,7 +217,7 @@
 					<ul class="nav nav-tabs">
 						{foreach $ticketAllStatusData as $tstatus}
 							<li class="nav-item {if $tstatus->id == $tabStatus}active{/if}" style="{if $tstatus->id == '1'}border-left:1px solid #d3d8db !important;{/if}">
-								<a class="nav-link {if $tstatus->id == $tabStatus}active{/if}" {if $tstatus->id != $tabStatus}href="{$current}&status={$tstatus->id}{if isset($activeLabel)}&label={$activeLabel}{/if}&token={$token}{/if}">
+								<a class="nav-link {if $tstatus->id == $tabStatus}active{/if}" {if $tstatus->id != $tabStatus}href="{$wk_whole_url}&status={$tstatus->id}{if isset($activeLabel)}&label={$activeLabel}{/if}{/if}">
 									{if $tstatus->id == '1'}
 										<i class="icon-inbox"></i>
 									{elseif $tstatus->id == '2'}
@@ -241,9 +247,9 @@
 										<th><input type="checkbox" id="wk_uvdeskticket_list_all"></th>
 										<th>{l s='Priority' mod='wkuvdeskticketsystem'}</th>
 										<th>{l s='Ticket' mod='wkuvdeskticketsystem'}</th>
-										<th>{l s='Customer Name' mod='wkuvdeskticketsystem'}</th>
+										<th>{l s='Customer name' mod='wkuvdeskticketsystem'}</th>
 										<th width="20%">{l s='Subject' mod='wkuvdeskticketsystem'}</th>
-										<th>{l s='Date Added' mod='wkuvdeskticketsystem'}</th>
+										<th>{l s='Date added' mod='wkuvdeskticketsystem'}</th>
 										<th><center>{l s='Replies' mod='wkuvdeskticketsystem'}</center></th>
 										<th>{l s='Agent' mod='wkuvdeskticketsystem'}</th>
 										<th><center>{l s='Action' mod='wkuvdeskticketsystem'}</center></th>
@@ -262,7 +268,7 @@
 												<td>#{$tickets->incrementId}</td>
 												<td>{$tickets->customer->name}</td>
 												<td>{$tickets->subject|truncate:30:'..':true:true}</td>
-												<td>{$tickets->formatedCreatedAt}</td>
+												<td>{if isset($tickets->formatedCreatedAt) && $tickets->formatedCreatedAt}{$tickets->formatedCreatedAt}{else}-{/if}</td>
 												<td><center>{$tickets->totalThreads}</center></td>
 												<td>
 													<div class="getAllAgent">
@@ -278,7 +284,7 @@
 												<td>
 													<center>
 													<a title="{l s='View' mod='wkuvdeskticketsystem'}" href="{$current}&id={$tickets->incrementId}&token={$token}">
-														<button class="btn btn-primary">
+														<button class="btn btn-primary" style="text-transform: none;">
 															<i class="icon-eye"></i>&nbsp;
 															{l s='View' mod='wkuvdeskticketsystem'}
 														</button>
@@ -288,7 +294,11 @@
 											</tr>
 										{/foreach}
 									{else}
-										<tr><td colspan="8">{l s='No tickets yet' mod='wkuvdeskticketsystem'}</td></tr>
+										<tr>
+											<td colspan="9">
+												<center>{l s='No tickets yet' mod='wkuvdeskticketsystem'}</center>
+											</td>
+										</tr>
 									{/if}
 								</tbody>
 							</table>
@@ -311,7 +321,9 @@
 		</div>
 	</div>
 {else}
-	<div class="alert alert-danger">{l s='Something went wrong' mod='wkuvdeskticketsystem'}</div>
+	<div class="alert alert-danger">
+		{l s='Module configuration is not correct or something went wrong.' mod='wkuvdeskticketsystem'}
+	</div>
 {/if}
 
 <div id="wk-loading-overlay">
@@ -324,6 +336,7 @@
 	{/if}
 	{addJsDef backend_controller = 1}
 	{addJsDef uvdesk_ticket_controller = $link->getAdminLink('AdminUvdeskTicketList')}
+	{addJsDef wk_whole_url = $wk_whole_url}
 	{addJsDefL name='confirm_delete'}{l s='Are you sure want to delete?' mod='wkuvdeskticketsystem'}{/addJsDefL}
 	{addJsDefL name='choose_one'}{l s='Select atleast one ticket' mod='wkuvdeskticketsystem'}{/addJsDefL}
 	{addJsDefL name='max_file'}{l s='Maximum Number of file is ' mod='wkuvdeskticketsystem'}{/addJsDefL}

@@ -1,22 +1,22 @@
 <?php
 /**
-* NOTICE OF LICENSE
-*
-* This source file is subject to the Academic Free License version 3.0
-* that is bundled with this package in the file LICENSE.txt
-* It is also available through the world-wide-web at this URL:
-* https://opensource.org/licenses/AFL-3.0
-*
-* DISCLAIMER
-*
-* Do not edit or add to this file if you wish to upgrade this module to a newer
-* versions in the future. If you wish to customize this module for your needs
-* please refer to CustomizationPolicy.txt file inside our module for more information.
-*
-* @author Webkul IN
-* @copyright Since 2010 Webkul
-* @license https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
-*/
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License version 3.0
+ * that is bundled with this package in the file LICENSE.txt
+ * It is also available through the world-wide-web at this URL:
+ * https://opensource.org/licenses/AFL-3.0
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this module to a newer
+ * versions in the future. If you wish to customize this module for your needs
+ * please refer to CustomizationPolicy.txt file inside our module for more information.
+ *
+ * @author Webkul IN
+ * @copyright Since 2010 Webkul
+ * @license https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
+ */
 class AdminUvdeskTicketListController extends ModuleAdminController
 {
     public function __construct()
@@ -45,6 +45,7 @@ class AdminUvdeskTicketListController extends ModuleAdminController
         $this->context->smarty->assign([
             'self' => dirname(__FILE__),
             'backendController' => 1,
+            'wk_whole_url' => Tools::getShopDomainSsl(true, true) . $_SERVER['REQUEST_URI'],
         ]);
 
         $objUvdesk = new WkUvdeskHelper();
@@ -101,7 +102,8 @@ class AdminUvdeskTicketListController extends ModuleAdminController
             if (Tools::getValue('sort_by')) {
                 $sort = Tools::getValue('sort_by');
             } else {
-                $sort = 't.id';
+                // $sort = 't.id';
+                $sort = 't.updatedAt';
             }
             if (Tools::getValue('label')) {
                 $label = Tools::getValue('label');
@@ -246,7 +248,7 @@ class AdminUvdeskTicketListController extends ModuleAdminController
             $reply = Tools::getValue('reply');
 
             if (!$reply) {
-                $this->errors[] = Tools::displayError($this->l('Message is required field.'));
+                $this->errors[] = $this->l('Message is required field.');
             }
 
             if (empty($this->errors)) {
@@ -268,7 +270,7 @@ class AdminUvdeskTicketListController extends ModuleAdminController
                 }
 
                 if (!$success) {
-                    $this->errors[] = Tools::displayError($this->l('Something went wrong'));
+                    $this->errors[] = $this->l('Something went wrong');
                 }
             }
         }
@@ -333,10 +335,10 @@ class AdminUvdeskTicketListController extends ModuleAdminController
             $deleteSuccess = $objUvdesk->deleteTickets($checkedTicketIds);
             $deleteSuccess = (array) $deleteSuccess;
             if (!isset($deleteSuccess['error'])) {
-                die(json_encode($deleteSuccess));
+                exit(json_encode($deleteSuccess));
             }
         }
-        die('0'); // ajax close
+        exit('0'); // ajax close
     }
 
     public function ajaxProcessAssignAgent()
@@ -348,10 +350,10 @@ class AdminUvdeskTicketListController extends ModuleAdminController
             $assignSuccess = $objUvdesk->assignAgent($ticketId, $memberId);
             $assignSuccess = (array) $assignSuccess;
             if (!isset($assignSuccess['error'])) {
-                die(json_encode($assignSuccess));
+                exit(json_encode($assignSuccess));
             }
         }
-        die('0'); // ajax close
+        exit('0'); // ajax close
     }
 
     public function ajaxProcessSearchAgentByName()
@@ -362,10 +364,10 @@ class AdminUvdeskTicketListController extends ModuleAdminController
             $resultSuccess = $objUvdesk->getMembers($searchName);
             $resultSuccess = (array) $resultSuccess->users;
             if (!isset($resultSuccess['error'])) {
-                die(json_encode($resultSuccess));
+                exit(json_encode($resultSuccess));
             }
         }
-        die('0'); // ajax close
+        exit('0'); // ajax close
     }
 
     public function ajaxProcessSearchFilterByName()
@@ -379,10 +381,10 @@ class AdminUvdeskTicketListController extends ModuleAdminController
                 $resultSuccess = (array) $resultSuccess->customers;
             }
             if (!isset($resultSuccess['error'])) {
-                die(json_encode($resultSuccess));
+                exit(json_encode($resultSuccess));
             }
         }
-        die('0'); // ajax close
+        exit('0'); // ajax close
     }
 
     public function ajaxProcessLoadFilterData()
@@ -399,7 +401,7 @@ class AdminUvdeskTicketListController extends ModuleAdminController
         } elseif ($filterAction == 'type' && isset($objUvdesk->getFilteredData('type')->type)) {
             $filterData = $objUvdesk->getFilteredData('type')->type; // uvdesk type
         }
-        die(json_encode($filterData)); // ajax close
+        exit(json_encode($filterData)); // ajax close
     }
 
     public function ajaxProcessGetTicketThreads()
@@ -411,13 +413,13 @@ class AdminUvdeskTicketListController extends ModuleAdminController
             $ticketThreads = $objUvdesk->getThreads($ticketId, $threadPage);
             if (isset($ticketThreads->threads) && $ticketThreads->threads) {
                 $ascendingThreads = array_reverse($ticketThreads->threads);
-                die(json_encode([
+                exit(json_encode([
                     'threads' => (array) $ascendingThreads,
                     'threadsPagination' => $ticketThreads->pagination,
                 ]));
             }
         }
-        die('0');
+        exit('0');
     }
 
     public function ajaxProcessDeleteCollaborator()
@@ -429,10 +431,10 @@ class AdminUvdeskTicketListController extends ModuleAdminController
             $deleteSuccess = $objUvdesk->removeCollaborator($ticketId, $collaboratorId);
             $deleteSuccess = (array) $deleteSuccess;
             if (!isset($deleteSuccess['error'])) {
-                die(json_encode($deleteSuccess));
+                exit(json_encode($deleteSuccess));
             }
         }
-        die('0');
+        exit('0');
     }
 
     public function setMedia($isNewTheme = false)
